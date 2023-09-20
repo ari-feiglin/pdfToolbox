@@ -1,0 +1,84 @@
+\catcode`@=11
+
+\input pdfGraphics
+
+\catcode`_=8
+
+\let\@xp=\expandafter
+\font\scten  = cmcsc10
+\font\sften = cmss10
+
+\def\pdfGraphics{{\scten pdf}{\rm G}{\scten raphics}}
+\def\pdfGraphicscolor{\localcolor rgb{.9 0 0}{\scten pdf}\localcolor rgb{0 0 .6}{\rm G}\localcolor rgb{0 .5 0}{\scten raphics}}
+\def\pdfGraphicsversion{0.0.1}
+\def\pdfGraphicsupdate{September 12, 2023}
+
+\def\fakebold#1{\pdfliteral{2 Tr .2 w}#1\pdfliteral{0 Tr 1 w}}
+\def\scalebox[#1]#2{{\setbox0=\hbox{#2}\hbox to#1\wd0{\pdfliteral{q #1 0 0 #1 0 0 cm}\rlap{#2}\pdfliteral{Q}\hfil}}}
+\def\begincenter{\bgroup\leftskip=0pt plus 1fill \rightskip=\leftskip}
+\def\endcenter{\par\egroup}
+
+\def\fbox#1{\vbox{\hrule\hbox{\vrule$#1$\vrule}\hrule}}
+
+\def\flip#1{{\setbox0=\hbox{#1}\kern\wd0\pdfliteral{q -1 0 0 1 0 0 cm}\rlap{#1}\pdfliteral{Q}}}
+
+\font\sevenrm = cmr7
+\def\XeTeX{X\kern-.125em\lower.5ex\hbox{\flip{E}}\kern-.1667em\TeX}
+\def\LaTeX{L\kern-.36em{\setbox0=\hbox{T}\vbox to\ht0{\hbox{\sevenrm A}\vss}}\kern-.15em\TeX}
+\def\pdfTeX{{\scten pdf}\TeX}
+\def\LuaTeX{Lua\TeX}
+
+\def\fontuse{\afterassignment\@@ \font\@@}
+\def\scalefont{\fontuse \curr@font scaled }
+
+%\def\title#1{\leavevmode\vskip.1\vsize\centerline{\fontuse cmcsc10 scaled 5000 \fakebold{#1}}\bigskip}
+\def\title#1{\leavevmode\vskip.1\vsize\centerline{\scalebox[8]{\fakebold{#1}}}\bigskip}
+
+\newcount\c@section
+\newcount\c@subsection
+\def\section#1{\bigskip\advance\c@section by 1 \c@subsection=0 \hbox{\fontuse cmbx10 scaled 2000 \the\c@section. #1}\par\bigskip}
+\def\subsection#1{\medskip\advance\c@subsection by 1 \hbox{\fontuse cmbx10 scaled 1500 \the\c@section.\the\c@subsection. #1}\par\medskip}
+
+\definecolormacro{blueish}{rgb}{0 0 .6}
+
+\parindent=0pt
+\parskip=3pt
+\hoffset=\dimexpr 2cm - 1in \relax
+\advance\hsize by -2\hoffset
+\voffset=2\hoffset
+\advance\vsize by -2\voffset
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\nopagenumbers
+\pageborder{rgb{.9 .9 1}}{rgb{0 0 1}}{2}
+\title{\pdfGraphicscolor}
+\unskip
+{\setbox0=\hbox{\fakebold{\pdfGraphics}}\centerline{\hbox to8\wd0{\hfil\it\color{blueish}version \pdfGraphicsversion}}}
+\centerline{\it\color{blueish} S. Lurp}
+\centerline{\color rgb{0 .7 0}\tt slurper04@gmail.com}
+\centerline{\it\color{blueish}\pdfGraphicsupdate}
+
+\bigskip
+\hbox to \hsize{\hfil\vbox{\hsize=.7\hsize
+\begincenter
+
+\setboxshadowcolor{rgb{.6 .6 .8}}
+\bppbox{rgb{.4 .4 .8}}{rgb{.8 .8 1}}{blueish}
+
+    The \pdfGraphics{} package's purpose is to add graphics to your \TeX{} document.
+    It contains macros for coloring your package, drawing graphics, and adding colored boxes.
+    It is not nearly as versatile as \LaTeX's {\sften xcolor} package, but it should suffice for basic purposes.
+
+\eppbox
+
+\endcenter
+}\hfil}
+
+\vfill\eject
+
+\footline={\hfil\folio\hfil}
+
+\bye
+
+

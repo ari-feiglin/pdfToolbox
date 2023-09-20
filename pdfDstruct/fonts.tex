@@ -1,0 +1,211 @@
+\input pdfToolbox-utils
+\input pdfData
+
+\createarray{available fonts}
+
+\def\___setfontsizes#1#2#3{%
+    \def\_temp{#2}%
+    \def\_tempA{default}%
+    \font\@@=#3\relax%
+    \ifx\_temp\_tempA%
+        \_xp\edef\csname #1 default\endcsname{#3}%
+    \else%
+        \_xp\edef\csname #1 at #2\endcsname{#3}%
+    \fi%
+}
+
+\def\__setfontsizes#1#2{%
+    \ifx\_nul#2%
+    \else%
+        \___setfontsizes{#1}#2%
+        \_afterfi{\__setfontsizes{#1}}%
+    \fi%
+}
+
+\def\_setfontsizes#1#2{%
+    \def\_temp{\__setfontsizes{#1}}%
+    \_xp\_temp#2\_nul%
+}
+
+\def\addfont#1#2{%
+    \_mapkeys_with_setter\_vanilla_mapkey\lastkeys{#2}%
+    \keyexists{default}\_defaultcode\lastkeys%
+    \ifx\_defaultcode\_nul%
+        {\newlinechar=`^^J
+            \errhelp={Default codes are used for when a specific font size is not specified but requested, in which case the default code is scaled up to the requested font size.^^J%
+            For example, if the font name is `rm', the default code may be `cmr10'.^^J%
+            If a font size of 20 is requested, but not specified, then the font `cmr10 at 20pt' will be utilized.}%
+            \errmessage{Default code was not specified}%
+        }%
+    \fi%
+    \_setfontsizes{#1}\lastkeys%
+    \appendarray{available fonts}{#1}%
+}
+
+\def\applyfontcode{\afterassignment\@@ \font\@@}
+
+\def\getfontcode#1#2{%
+    \ifcsname #1 at #2\endcsname%
+        \csname #1 at #2\endcsname%
+    \else%
+        \csname #1 default\endcsname\_space at #2
+    \fi%
+}
+
+\def\textfontcalc#1{\def\fontsize{#1}}
+\def\scriptfontcalc#1{\edef\fontsize{\the\dimexpr #1 * 7 / 10\relax}}
+\def\scriptscriptfontcalc#1{\edef\fontsize{\the\dimexpr #1 / 2\relax}}
+
+%   #1: Family
+%   #2: Font
+\def\_setfontfamily#1#2{%
+    \textfontcalc{\currscale}%
+    \expanded{\noexpand\font\noexpand\@@=\getfontcode{#2}{\fontsize}}%
+    \textfont#1=\@@%
+    \scriptfontcalc{\currscale}%
+    \expanded{\noexpand\font\noexpand\@@=\getfontcode{#2}{\fontsize}}%
+    \scriptfont#1=\@@%
+    \scriptscriptfontcalc{\currscale}%
+    \expanded{\noexpand\font\noexpand\@@=\getfontcode{#2}{\fontsize}}%
+    \scriptscriptfont#1=\@@%
+}
+
+\def\_rsetfontfamily#1#2#3{\_setfontfamily{#2}{#1}}
+
+\createarray{math@fonts}
+
+\def\setfontfamily#1#2{%
+    \ifcsname family@#1@font\endcsname%
+        \removeitemarray{font@\csname family@#1@font\endcsname @family}{#1}%
+    \fi%
+    \_setfontfamily{#1}{#2}%
+    \_xp\def\csname family@#1@font\endcsname{#2}%
+    \ensurearray{font@#2@family}%
+    \appendarray{font@#2@family}{#1}%
+    \appendarray{math@fonts}{#2}%
+}
+
+\def\_updatefontfamily#1#2{%
+    \arraymap{font@#1@family}{\_rsetfontfamily{#1}}%
+}
+
+\def\updatefontfamilies{%
+    \arraymap{math@fonts}\_updatefontfamily%
+}
+
+\def\_setfont_and_scale#1#2{%
+    \applyfontcode\getfontcode{#1}{#2}\relax%
+}
+
+\protected\def\setfont#1{%
+    \def\currfont{#1}%
+    \_setfont_and_scale\currfont\currscale%
+}
+
+\protected\def\setscale#1{%
+    \def\currscale{#1}%
+    \_setfont_and_scale\currfont\currscale%
+    \updatefontfamilies%
+}
+
+\protected\def\setfontandscale#1#2{%
+    \def\currfont{#1}%
+    \def\currscale{#2}%
+    \_setfont_and_scale\currfont\currscale%
+    \updatefontfamilies%
+}
+
+\addfont{rm}{%
+    default=cmr10,
+    5pt=cmr5,
+    6pt=cmr6,
+    7pt=cmr7,
+    8pt=cmr8,
+    9pt=cmr9,
+    10pt=cmr10,
+    12pt=cmr12,
+    17pt=cmr17
+}
+
+\addfont{it}{%
+    default=cmti10,
+    7pt=cmti7,
+    8pt=cmti8,
+    9pt=cmti9,
+    10pt=cmti10,
+    12pt=cmti12
+}
+
+\addfont{bf}{%
+    default=cmbx10,
+    5pt=cmbx5,
+    6pt=cmbx6,
+    7pt=cmbx7,
+    8pt=cmbx8,
+    9pt=cmbx9,
+    10pt=cmbx10,
+    12pt=cmbx12
+}
+
+\addfont{sc}{%
+    default=cmcsc10,
+    8pt=cmcsc8,
+    9pt=cmcsc9,
+    10pt=cmcsc10
+}
+
+\addfont{mi}{%
+    default=cmmi10,
+    5pt=cmmi5,
+    6pt=cmmi6,
+    7pt=cmmi7,
+    8pt=cmmi8,
+    9pt=cmmi9,
+    10pt=cmmi10,
+    12pt=cmmi12
+}
+
+\addfont{sy}{%
+    default=cmsy10,
+    5pt=cmsy5,
+    6pt=cmsy6,
+    7pt=cmsy7,
+    8pt=cmsy8,
+    9pt=cmsy9,
+    10pt=cmsy10
+}
+
+\addfont{ex}{%
+    default=cmex10,
+    7pt=cmex7,
+    8pt=cmex8,
+    9pt=cmex9,
+    10pt=cmex10
+}
+
+\addfont{sl}{%
+    default=cmsl10,
+    8pt=cmsl8,
+    9pt=cmsl9,
+    10pt=cmsl10,
+    12pt=cmsl12
+}
+
+\addfont{tt}{%
+    default=cmtt10,
+    8pt=cmtt8,
+    9pt=cmtt9,
+    10pt=cmtt10,
+    12pt=cmtt12
+}
+
+\setfontandscale{rm}{10pt}
+\setfontfamily{0}{rm}
+\setfontfamily{1}{mi}
+\setfontfamily{2}{sy}
+\setfontfamily{3}{ex}
+\setfontfamily{4}{it}
+\setfontfamily{5}{sl}
+\setfontfamily{6}{bf}
+\setfontfamily{7}{tt}
+

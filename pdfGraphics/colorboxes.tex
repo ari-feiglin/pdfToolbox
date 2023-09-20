@@ -1,0 +1,83 @@
+\input pdfToolbox-utils
+\input pdfGraphics/colors
+
+\_checkloaded{colorboxes}
+
+\newbox\_contentbox
+\newbox\_splitbox
+
+\def\_spaceleft{%
+    \ifdim\pagetotal=\z@%
+        \dimexpr\vsize - \topskip\relax%
+    \else%
+        \dimexpr \pagegoal - \pagetotal - \topskip\relax%
+    \fi%
+}
+
+\newif\if_breakpage
+\def\_getsplitdim#1{%
+    \ifdim\dimexpr\_spaceleft-#1\relax>\ht\_contentbox%
+        \edef\_splitdim{\the\ht\_contentbox}%
+        \_breakpagefalse%
+    \else%
+        \ifdim\dimexpr\_spaceleft-#1\relax<\z@%
+            \par\vfill\break%
+            \_getsplitdim{#1}%
+        \else%
+            \edef\_splitdim{\the\dimexpr\_spaceleft-#1\relax}%
+            \_breakpagetrue%
+        \fi%
+    \fi%
+}
+
+%   Splits the content box to fit into pages.
+%   #1: Total vertical buffer
+%   #2: Output routine for new box
+\def\_splitcontentbox#1#2{{%
+    \splittopskip=\z@%
+    \boxmaxdepth=\z@%
+    \offinterlineskip%
+    \unless\ifvoid\_contentbox%
+        \_getsplitdim{#1}%
+        \setbox\_splitbox = \vsplit\_contentbox to\_splitdim\relax%
+        \setbox0=\vbox{#2}%
+        \vbox to\z@{\copy0\vss}%
+        \kern\ht0\relax\penalty\z@%
+        \_splitcontentbox{#1}{#2}%
+    \fi%
+}}
+
+\def\_ppbuf{0pt}
+\def\_bppbox#1#2#3[#4]{%
+    \def\_colorcontentbox{%
+        \hbox{\curvedcolorbox{#2}{#1}{\_setcolor{}{#3}\box\_splitbox}{#4}}%
+    }
+    \par%
+    \kern\_ppbuf\relax%
+    \null\par% Move the kern from recent contributions to MVL
+    \setbox\_contentbox=\vbox\bgroup
+}
+
+\def\bppbox#1#2#3{%
+    \_ifnextchar[ {\_bppbox{#1}{#2}{#3}}{\_bppbox{#1}{#2}{#3}[....]}%
+}
+
+\def\eppbox{%
+    \egroup%
+    \_splitcontentbox{2\_actual_curve_buf}\_colorcontentbox%
+    \vskip\_ppbuf\relax%
+}
+%
+%\_repeat{50}{This is a test }
+%
+%\definecolor{reddish}{rgb}{.6 0 0}
+%\bppbox{.8 .4 .4}{1 .8 .8}{reddish}
+%
+%    \advance\hsize by-2\_actual_curve_buf
+%    \_prepeat{300}{\literal#1{#1. This is a test\par}}
+%
+%\eppbox
+%
+%\_prepeat{100}{\literal#1{#1. This is a test\par}}
+%
+%\bye
