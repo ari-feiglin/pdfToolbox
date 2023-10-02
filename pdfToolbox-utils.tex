@@ -15,11 +15,14 @@
 \def\_nul{\_nul}
 \def\_id#1{#1}
 \long\def\_gobble#1{}
+\long\def\_gobbletilnul#1\_nul{}
 \def\_mstrip{\_xp\_gobble\string}
 \def\True{\True}
 \def\False{\False}
 
-\newcount\_pdfToolcount
+\newcount\_ptbcountA    \newcount\_ptbcountB    \newcount\_ptbcountC
+\newbox\_ptbboxA        \newbox\_ptbboxB
+\newdimen\_ptbdimenA    \newdimen\_ptbdimenB
 
 \def\glet{\global\let}
 
@@ -89,12 +92,14 @@
     \glet\currlet=\let%
     \glet\currdef=\def%
     \glet\curredef=\edef%
+    \glet\currset=\empty%
 }
 
 \def\globalsetters{%
     \glet\currlet=\glet%
     \glet\currdef=\gdef%
     \glet\curredef=\xdef%
+    \glet\currset=\global%
 }
 
 \localsetters
@@ -119,6 +124,17 @@
 
 \long\def\_prepeat#1#2{%
     \__prepeat{1}{#1}{#2}%
+}
+
+%   Repeat a macro multiple times
+%   #1: Start, #2: Stop, #3: Step
+%   #4: Comparison (<, =, or >), comparison done by #1 #4 #2 (if true, stop)
+%   #5: Macro (current index is passed to it)
+\def\_varrepeat#1#2#3#4#5{%
+    \unless\ifnum #1 #4 #2 %
+        #5{#1}%
+        \_afterfi{\_xp\_varrepeat\_xp{\the\numexpr #1+#3\relax}{#2}{#3}{#4}{#5}}%
+    \fi%
 }
 
 \def\literal{\afterassignment\@@ \def\@@}
@@ -177,5 +193,14 @@
 \newwrite\_PTBwrite
 \newread\_PTBread
 
+\def\_reverse#1{%
+    \def\_regB{#1}%
+    \_xp\_xp\_xp\def\_xp\_xp\_xp\_regA\_xp\_xp\_xp{\_xp\_regB\_regA}%
+}
 
+\def\reverse#1#2{%
+    \def\_regA{}%
+    \map{\_reverse}{#2}%
+    \let#1=\_regA%
+}
 

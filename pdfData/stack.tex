@@ -5,6 +5,10 @@
 %   #1: The name of the stack.
 \def\createmacrostack#1{\_xp\def\csname mstack@#1@sp\endcsname{0}}
 
+%   Gets the current pointer on a macro stack.
+%   #1: The name of the stack.
+\def\macrostackpointer#1{\csname mstack@#1@sp\endcsname}
+
 %   Pushes a macro onto a macro stack.
 %   #1: The name of the stack.
 %   #2: The control sequence to push onto the stack.
@@ -12,6 +16,13 @@
     \_xp\edef\csname mstack@#1@sp\endcsname{\the\numexpr \csname mstack@#1@sp\endcsname + 1\relax}%
     \_xp\let\csname mstack@#1@def@\csname mstack@#1@sp\endcsname\endcsname=#2%
     \_xp\edef\csname mstack@#1@name@\csname mstack@#1@sp\endcsname\endcsname{\_mstrip#2}%
+}
+
+%   Gets a macro on a stack.
+%   #1: The name of the stack
+%   #2: The index on the stack
+\def\macrostackget#1#2{%
+    \csname mstack@#1@def@#2\endcsname%
 }
 
 %   Decrements the stack pointer of a macrostack without restoring the definition of the control sequence.
@@ -83,4 +94,5 @@
     \macrostackpush{macro_stack}{#1}%
     \edef\macro_stack_ptr{\the\numexpr \macro_stack_ptr + 1\relax}%
 }
+
 

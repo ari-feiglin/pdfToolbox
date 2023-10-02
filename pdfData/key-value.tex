@@ -30,7 +30,11 @@
 % #1: setter, #2: lastkeys, #3: map
 \def\_mapkeys_with_setter#1#2#3{%
     \def#2{}%
-    \_mapkeys{#1}{#2}#3,\_nul=,%
+    \def\_temp{#3}%
+    \ifx\_temp\empty%
+    \else%
+        \_afterfi{\_mapkeys{#1}{#2}#3,\_nul=,}%
+    \fi%
 }
 
 \def\getvalue#1{%

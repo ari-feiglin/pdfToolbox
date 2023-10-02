@@ -94,8 +94,10 @@
     }{#2}%
 }
 
+{\setbox0=\hbox{ }\xdef\_spacewd{\the\wd0}}
 \settocdepthformat1{title=\setfont{bf}, value=\setfont{bf}, leader=, indent=0pt, buffer=3pt}
 \settocdepthformat2{leader=\dotfill, indent=.75cm, buffer=0pt}
+\settocdepthformat3{leader=\dotfill, indent=\dimexpr .75cm+\_spacewd+\subsectionnumwidth\relax, buffer=0pt}
 
 \def\_definetocmanager#1{%
     \settoclinemanager{#1}{%
@@ -110,7 +112,7 @@
     }%
 }
  
-\_prepeat{2}\_definetocmanager
+\_prepeat{3}\_definetocmanager
 
 \createcounter{section}
 \createcounter{subsection}[section]
@@ -122,10 +124,9 @@
     \fi%
 }}
 
-\setmacrotolen\sectionnumwidth{99}
-\setmacrotolen\subsectionnumwidth{99.99}
-
-\setmacrotolen\maxpagelen{999}
+\setmacrotolen\sectionnumwidth{99}%
+\setmacrotolen\subsectionnumwidth{9.9}%
+\setmacrotolen\maxpagelen{9}%
 
 \def\settomax#1#2{{%
     \setbox0=\hbox{#2}%
@@ -167,39 +168,48 @@
     {\hbox to\subsectionnumwidth{\the\counter{section}.\the\counter{subsection}\hss} #1}%
 }
 
+\def\addthreedepth#1#2{%
+    \addtoccontent{#1}{\pagenobox}{3}{#2}%
+    \updatemaxpagelen{\the\pageno}%
+}
+
 \def\pagenobox{%
     \hbox to\maxpagelen{\hss\the\pageno}%
 }
 
-\newskip\sectionskip    \sectionskip=5pt plus 2pt minus 2pt
-
 \def\_section#1{%
     \advancecounter{section}{1}%
-    \par\vskip\sectionskip%
+    \par\bigskip%
     \noindent{\setfontandscale{bf}{15pt}\the\counter{section} #1}%
     \addtoccontent{\sectioncontent{#1}}{\pagenobox}{1}{section@\the\counter{section}}%
-    \par\penalty-500\relax%
+    \updatemaxpagelen{\the\pageno}%
+    \gdef\currsection{#1}%
+    \par\penalty-500\relax\bigskip%
 }
 
 \def\_pseudosection#1{%
-    \par\vskip\sectionskip%
+    \par\bigskip%
     \noindent{\setfontandscale{bf}{15pt}#1}%
+    \par\penalty-500\relax\bigskip%
 }
 
 \def\section{\@ifstar \_pseudosection\_section}
 
 \def\_subsection#1{%
     \advancecounter{subsection}{1}%
-    \par\vskip\sectionskip%
+    \par\medskip%
     \noindent{\setfontandscale{bf}{12pt}\the\counter{section}.\the\counter{subsection} #1}%
     \addtoccontent{\subsectioncontent{#1}}{\pagenobox}{2}{subsection@\the\counter{section}.\the\counter{subsection}}%
-    \updatesubsectionnumwidth{\the\pageno}%
-    \par%
+    \updatesubsectionnumwidth{\the\counter{section}.\the\counter{subsection}}%
+    \updatemaxpagelen{\the\pageno}%
+    \gdef\currsubsection{#1}%
+    \par\medskip%
 }
 
 \def\_pseudosubsection#1{%
-    \par\vskip\sectionskip%
+    \par\medskip%
     \noindent{\setfontandscale{bf}{12pt}#1}%
+    \par\medskip%
 }
 
 \def\subsection{\@ifstar \_pseudosubsection\_subsection}

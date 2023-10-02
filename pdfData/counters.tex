@@ -16,13 +16,14 @@
 
 \def\createcounter#1{%
     \_xp\newcount\csname count@#1\endcsname%
-    \csname count@#1\endcsname=0\relax%
+    \currset\csname count@#1\endcsname=0\relax%
     \createarray{count@#1@dependents}%
     \_ifnextchar[ {\_createcounter{#1}}{}%
 }
 
 \def\_zerocounter#1#2{%
-    \csname count@#1\endcsname=\z@%
+    \currset\csname count@#1\endcsname=\z@%
+    \zerodependents{#1}%
 }
 
 \def\zerodependents#1{%
@@ -30,21 +31,21 @@
 }
 
 \def\setcounter#1#2{%
-    \csname count@#1\endcsname=#2\relax%
+    \currset\csname count@#1\endcsname=#2\relax%
     \zerodependents{#1}%
 }
 
 \def\advancecounter#1#2{%
-    \advance\csname count@#1\endcsname by #2\relax%
+    \currset\advance\csname count@#1\endcsname by #2\relax%
     \zerodependents{#1}%
 }
 
 \def\advanceicounter#1#2{%
-    \advance\count\csname count@#1\endcsname by #2\relax%
+    \currset\advance\count\csname count@#1\endcsname by #2\relax%
 }
 
 \def\seticounter#1#2{%
-    \count\csname count@#1\endcsname=#2\relax%
+    \currset\count\csname count@#1\endcsname=#2\relax%
 }
 
 \def\counter#1{%
