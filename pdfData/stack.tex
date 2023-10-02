@@ -33,11 +33,17 @@
     \_xp\edef\csname mstack@#1@sp\endcsname{\the\numexpr \csname mstack@#1@sp\endcsname - 1\relax}%
 }
 
+%   Sets the control sequence from the top of the stack, without popping it.
+%   #1: The name of the stack
+\def\macrostackpeek#1{%
+    \_xplet{\csname\csname mstack@#1@name@\csname mstack@#1@sp\endcsname\endcsname\endcsname}{\csname mstack@#1@def@\csname mstack@#1@sp\endcsname\endcsname}%
+}
+
 %   Pops a control sequence off of the top of the stack.
 %   This restores the definition of the control sequence.
 %   #1: The name of the stack.
 \def\macrostackpop#1{%
-    \_xplet{\csname\csname mstack@#1@name@\csname mstack@#1@sp\endcsname\endcsname\endcsname}{\csname mstack@#1@def@\csname mstack@#1@sp\endcsname\endcsname}%
+    \macrostackpeek{#1}%
     \macrostackdecrement{#1}%
 }
 
@@ -83,8 +89,8 @@
 }
 
 \def\endscope{%
-    \stackpop{macro_stack_ptr}\_regB%
-    \loop\ifnum\macro_stack_ptr>\_regB%
+    \stackpop{macro_stack_ptr}\_uregB%
+    \loop\ifnum\macro_stack_ptr>\_uregB%
         \macrostackpop{macro_stack}%
         \edef\macro_stack_ptr{\the\numexpr \macro_stack_ptr - 1\relax}%
     \repeat%

@@ -27,8 +27,8 @@
 \def\glet{\global\let}
 
 \def\_xplet#1#2{%
-    \def\_regA{\_xp\let#1}%
-    \_xp\_regA#2%
+    \def\_uregA{\_xp\let#1}%
+    \_xp\_uregA#2%
 }
 
 \long\def\_afterfi#1#2\fi{\fi#1}
@@ -61,17 +61,17 @@
 \def\reversecall#1#2#3{#1{#3}{#2}}
 
 \def\__ifnextchar{%
-    \ifx\_regD\_regA %
-        \expandafter\_regB%
+    \ifx\_uregD\_uregA %
+        \expandafter\_uregB%
     \else%
-        \expandafter\_regC%
+        \expandafter\_uregC%
     \fi%
 }
 
 \bgroup
     \global\long\def\_ifnextchar#1#2#3{%
-        \let\_regA=#1\relax\def\_regB{#2}\def\_regC{#3}%
-        \futurelet\_regD\__ifnextchar%
+        \let\_uregA=#1\relax\def\_uregB{#2}\def\_uregC{#3}%
+        \futurelet\_uregD\__ifnextchar%
     }
 
     \unless\ifcsname @ifnextchar\endcsname
@@ -146,8 +146,8 @@
 \def\_getline#1{\bgroup\catcode`\^^M=12 \__getline{#1}}
 
 \def\@def@ifequals#1#2{%
-	\def\_regA{#1}\def\_regB{#2}%
-	\ifx\_regA\_regB %
+	\def\_uregA{#1}\def\_uregB{#2}%
+	\ifx\_uregA\_uregB %
 }
 \def\@tok@ifequals#1#2{\ifx#1#2}
 \let\@ifequals=\@tok@ifequals
@@ -162,14 +162,14 @@
 
 \def\default{\noexpand\default}
 \def\endifcases{\noexpand\endifcases}
-\def\@endcases#1\endifcases{\_regA}
+\def\@endcases#1\endifcases{\_uregA}
 
 \def\___ifstrcases#1#2#3{%
     \iftrue%
 		\_afterfi{%
-		    \ifequals{#1}{#2}{\def\_regA{#3}\@endcases}{%
+		    \ifequals{#1}{#2}{\def\_uregA{#3}\@endcases}{%
 		    	\ifequals{#2}{\default}{%
-		    		\def\_regA{#3}\@endcases%
+		    		\def\_uregA{#3}\@endcases%
 		    	}{\@ifstrcases{#1}}%
 		    }%
         }%
@@ -177,13 +177,13 @@
 }
 \def\__ifstrcases#1#2#{\___ifstrcases{#1}{#2}}
 \def\_ifstrcases{%
-    \ifx\_regB\endifcases%
+    \ifx\_uregB\endifcases%
         \_xp\_gobble%
     \else%
-        \_afterfi{\_xp\__ifstrcases\_xp{\_regA}}%
+        \_afterfi{\_xp\__ifstrcases\_xp{\_uregA}}%
     \fi%
 }
-\def\@ifstrcases#1{\def\_regA{#1}\futurelet\_regB\_ifstrcases}
+\def\@ifstrcases#1{\def\_uregA{#1}\futurelet\_uregB\_ifstrcases}
 
 \def\ifstrcases#1{\@ifstrcases{#1}}
 
@@ -194,13 +194,13 @@
 \newread\_PTBread
 
 \def\_reverse#1{%
-    \def\_regB{#1}%
-    \_xp\_xp\_xp\def\_xp\_xp\_xp\_regA\_xp\_xp\_xp{\_xp\_regB\_regA}%
+    \def\_uregB{#1}%
+    \_xp\_xp\_xp\def\_xp\_xp\_xp\_uregA\_xp\_xp\_xp{\_xp\_uregB\_uregA}%
 }
 
 \def\reverse#1#2{%
-    \def\_regA{}%
+    \def\_uregA{}%
     \map{\_reverse}{#2}%
-    \let#1=\_regA%
+    \let#1=\_uregA%
 }
 

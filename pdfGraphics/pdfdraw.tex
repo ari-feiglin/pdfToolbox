@@ -12,9 +12,6 @@
 \def\_subtract#1#2{\_nopt{#1pt - #2pt}}
 \def\_square#1{\_multiply{#1}{#1}}
 
-\def\_pdfdraw_mult#1#2{\_nopt{#1\dimexpr #2pt\relax}}
-\def\_pdfdraw_add#1#2{\_nopt{#1pt+#2pt}}
-
 \def\_pdfdraw_nattrans,{.996264 0 0 .996264 0 0 cm}
 
 \def\_pdfdraw_moveto#1#2{\_pdfdraw_p{#1}{#2} m }
@@ -25,19 +22,19 @@
 
 \def\_pdfdraw_cd{.55228475}
 \def\_pdfdraw_ellipse#1#2#3#4{% (x,y), r1, r2
-    \_pdfdraw_moveto {\_pdfdraw_add{#1}{#3}}{#2}%                                                   (x+r1, y)    m
-    \_pdfdraw_bezierc{\_pdfdraw_add{#1}{#3}}{\_pdfdraw_add{#2}{\_pdfdraw_mult\_pdfdraw_cd{#4}}}%    (x+r, y+d*r2)
-                    {\_pdfdraw_add{#1}{\_pdfdraw_mult\_pdfdraw_cd{#3}}}{\_pdfdraw_add{#2}{#4}}%     (x+d*r1, y+r2)
-                    {#1}{\_pdfdraw_add{#2}{#4}}%                                                    (x,y+r2)     c
-    \_pdfdraw_bezierc{\_pdfdraw_add{#1}{\_pdfdraw_mult{-\_pdfdraw_cd}{#3}}}{\_pdfdraw_add{#2}{#4}}% (x-d*1r,y+r2)
-                    {\_pdfdraw_add{#1}{-#3}}{\_pdfdraw_add{#2}{\_pdfdraw_mult\_pdfdraw_cd{#4}}}%    (x-r1,y+d*r2)
-                    {\_pdfdraw_add{#1}{-#3}}{#2}%                                                   (x-r1,y)     c
-    \_pdfdraw_bezierc{\_pdfdraw_add{#1}{-#3}}{\_pdfdraw_add{#2}{\_pdfdraw_mult{-\_pdfdraw_cd}{#4}}}%(x-r1, y-d*r2)
-                    {\_pdfdraw_add{#1}{\_pdfdraw_mult{-\_pdfdraw_cd}{#3}}}{\_pdfdraw_add{#2}{-#4}}% (x-d*r1, y-r2)
-                    {#1}{\_pdfdraw_add{#2}{-#4}}%                                                   (x,y-r2)     c
-    \_pdfdraw_bezierc{\_pdfdraw_add{#1}{\_pdfdraw_mult\_pdfdraw_cd{#3}}}{\_pdfdraw_add{#2}{-#4}}%   (x+d*r1,y-r2)
-                    {\_pdfdraw_add{#1}{#3}}{\_pdfdraw_add{#2}{\_pdfdraw_mult{-\_pdfdraw_cd}{#4}}}%  (x+r1,y-d*r2)
-                    {\_pdfdraw_add{#1}{#3}}{#2}%                                                    (x-r1,y)     c
+    \_pdfdraw_moveto {\_add{#1}{#3}}{#2}%                                                   (x+r1, y)    m
+    \_pdfdraw_bezierc{\_add{#1}{#3}}{\_add{#2}{\_multiply\_pdfdraw_cd{#4}}}%    (x+r, y+d*r2)
+                    {\_add{#1}{\_multiply\_pdfdraw_cd{#3}}}{\_add{#2}{#4}}%     (x+d*r1, y+r2)
+                    {#1}{\_add{#2}{#4}}%                                                    (x,y+r2)     c
+    \_pdfdraw_bezierc{\_add{#1}{\_multiply{-\_pdfdraw_cd}{#3}}}{\_add{#2}{#4}}% (x-d*1r,y+r2)
+                    {\_add{#1}{-#3}}{\_add{#2}{\_multiply\_pdfdraw_cd{#4}}}%    (x-r1,y+d*r2)
+                    {\_add{#1}{-#3}}{#2}%                                                   (x-r1,y)     c
+    \_pdfdraw_bezierc{\_add{#1}{-#3}}{\_add{#2}{\_multiply{-\_pdfdraw_cd}{#4}}}%(x-r1, y-d*r2)
+                    {\_add{#1}{\_multiply{-\_pdfdraw_cd}{#3}}}{\_add{#2}{-#4}}% (x-d*r1, y-r2)
+                    {#1}{\_add{#2}{-#4}}%                                                   (x,y-r2)     c
+    \_pdfdraw_bezierc{\_add{#1}{\_multiply\_pdfdraw_cd{#3}}}{\_add{#2}{-#4}}%   (x+d*r1,y-r2)
+                    {\_add{#1}{#3}}{\_add{#2}{\_multiply{-\_pdfdraw_cd}{#4}}}%  (x+r1,y-d*r2)
+                    {\_add{#1}{#3}}{#2}%                                                    (x-r1,y)     c
 }
 \def\_pdfdraw_circle#1#2#3{\_pdfdraw_ellipse{#1}{#2}{#3}{#3}}
 
@@ -51,42 +48,67 @@
 \let\_pdfdraw_xp=\relax
 \def\_pdfdraw_addtransform#1{%
     \_xp\_xp\_xp\def\_xp\_xp\_xp\_regA\_xp\_xp\_xp{\macrostackget{transstack}{\macrostackpointer{transstack}}}%
-    \macrostackpush{transstack}\_pdfdraw_transform%
     \_xp\def\_xp\_pdfdraw_transform\_xp##\_xp1\_xp##\_xp2\_xp{\_xp\_xp\_regA\expanded{#1{##1}{##2}}}%
+    \macrostackpush{transstack}\_pdfdraw_transform%
 }
 
-\def\_pdfdraw_preaddtransform#1{%
+\def\_pdfdraw_postaddtransform#1{%
     \_xp\_xp\_xp\def\_xp\_xp\_xp\_regA\_xp\_xp\_xp{\macrostackget{transstack}{\macrostackpointer{transstack}}}%
-    \macrostackpush{transstack}\_pdfdraw_transform%
     \_xp\def\_xp\_pdfdraw_transform\_xp##\_xp1\_xp##\_xp2\_xp{\_xp\_xp\_xp#1\_xp\expanded\_xp{\_regA{##1}{##2}}}%
+    \macrostackpush{transstack}\_pdfdraw_transform%
+}
+
+\def\_pdfdraw_settransform#1{%
+    \let\_pdfdraw_transform=#1%
+    \macrostackpush{transstack}\_pdfdraw_transform%
 }
 
 \def\_pdfdraw_poptransform{%
     \macrostackpop{transstack}%
+    \macrostackpeek{transstack}%
 }
 
 \createmacrostack{affinetransstack}
 \def\_pdfdraw_addaffinetransform#1#2#3#4#5#6{%
+    \beginscope%
+    \localize\_regA%
     \edef\_regA##1##2{%
-        {\noexpand\_pdfdraw_add{\noexpand\_pdfdraw_add{\noexpand\_pdfdraw_mult{#1}{##1}}{\noexpand\_pdfdraw_mult{#3}{##2}}}{#5}}% #1 * ##1 + #3 * ##2 + #5
-        {\noexpand\_pdfdraw_add{\noexpand\_pdfdraw_add{\noexpand\_pdfdraw_mult{#2}{##1}}{\noexpand\_pdfdraw_mult{#4}{##2}}}{#6}}% #2 * ##1 + #4 * ##2 + #6
+        {\noexpand\_add{\noexpand\_add{\noexpand\_multiply{#1}{##1}}{\noexpand\_multiply{#3}{##2}}}{#5}}% #1 * ##1 + #3 * ##2 + #5
+        {\noexpand\_add{\noexpand\_add{\noexpand\_multiply{#2}{##1}}{\noexpand\_multiply{#4}{##2}}}{#6}}% #2 * ##1 + #4 * ##2 + #6
     }%
     \macrostackpush{affinetransstack}\_regA%
     \_xp\_xp\_xp\_pdfdraw_addtransform\macrostackget{affinetransstack}{\macrostackpointer{affinetransstack}}%
+    \endscope%
 }
 
-\def\_pdfdraw_preaddaffinetransform#1#2#3#4#5#6{%
+\def\_pdfdraw_postaddaffinetransform#1#2#3#4#5#6{%
+    \beginscope%
+    \localize\_regA%
     \edef\_regA##1##2{%
-        {\noexpand\_pdfdraw_add{\noexpand\_pdfdraw_add{\noexpand\_pdfdraw_mult{#1}{##1}}{\noexpand\_pdfdraw_mult{#3}{##2}}}{#5}}% #1 * ##1 + #3 * ##2 + #5
-        {\noexpand\_pdfdraw_add{\noexpand\_pdfdraw_add{\noexpand\_pdfdraw_mult{#2}{##1}}{\noexpand\_pdfdraw_mult{#4}{##2}}}{#6}}% #2 * ##1 + #4 * ##2 + #6
+        {\noexpand\_add{\noexpand\_add{\noexpand\_multiply{#1}{##1}}{\noexpand\_multiply{#3}{##2}}}{#5}}% #1 * ##1 + #3 * ##2 + #5
+        {\noexpand\_add{\noexpand\_add{\noexpand\_multiply{#2}{##1}}{\noexpand\_multiply{#4}{##2}}}{#6}}% #2 * ##1 + #4 * ##2 + #6
     }%
     \macrostackpush{affinetransstack}\_regA%
-    \_xp\_xp\_xp\_pdfdraw_preaddtransform\macrostackget{affinetransstack}{\macrostackpointer{affinetransstack}}%
+    \_xp\_xp\_xp\_pdfdraw_postaddtransform\macrostackget{affinetransstack}{\macrostackpointer{affinetransstack}}%
+    \endscope%
 }
+
+\def\_pdfdraw_setaffinetransform#1#2#3#4#5#6{%
+    \beginscope%
+    \localize\_regA%
+    \edef\_regA##1##2{%
+        {\noexpand\_add{\noexpand\_add{\noexpand\_multiply{#1}{##1}}{\noexpand\_multiply{#3}{##2}}}{#5}}% #1 * ##1 + #3 * ##2 + #5
+        {\noexpand\_add{\noexpand\_add{\noexpand\_multiply{#2}{##1}}{\noexpand\_multiply{#4}{##2}}}{#6}}% #2 * ##1 + #4 * ##2 + #6
+    }%
+    \macrostackpush{affinetransstack}\_regA%
+    \_xp\_xp\_xp\_pdfdraw_settransform\macrostackget{affinetransstack}{\macrostackpointer{affinetransstack}}%
+    \endscope%
+}
+
 %\def\_pdfdraw_addaffinetransform#1#2#3#4{%
 %    \def\_regA##1##2{%
-%        {\_pdfdraw_add{\_pdfdraw_mult{#1}{##1}}{\_pdfdraw_mult{#3}{##2}}}% #1 * ##1 + #3 * ##2
-%        {\_pdfdraw_add{\_pdfdraw_mult{#2}{##1}}{\_pdfdraw_mult{#4}{##2}}}% #2 * ##1 + #4 * ##2
+%        {\_add{\_multiply{#1}{##1}}{\_multiply{#3}{##2}}}% #1 * ##1 + #3 * ##2
+%        {\_add{\_multiply{#2}{##1}}{\_multiply{#4}{##2}}}% #2 * ##1 + #4 * ##2
 %    }%
 %    \macrostackpush{affinetransstack}\_regA%
 %    \_xp\_xp\_xp\_pdfdraw_addtransform\macrostackget{affinetransstack}{\macrostackpointer{affinetransstack}}%
@@ -170,14 +192,15 @@
     \egroup%
 }
 
-\def\coordbuf{0pt}
+\def\coordhbuf{3pt}
+\def\coordvbuf{0pt}
 
 \def\_addnode#1#2#3#4{%
     \setbox0=\hbox{#3}%
-    \_xp\xdef\csname point@#4.left\endcsname{\_nopt{#1pt - .5\wd0 - \coordbuf}}%
-    \_xp\xdef\csname point@#4.top\endcsname{\_nopt{#2pt + .5\ht0 + .5\dp0 + \coordbuf}}%
-    \_xp\xdef\csname point@#4.right\endcsname{\_nopt{#1pt + .5\wd0 + \coordbuf}}%
-    \_xp\xdef\csname point@#4.bottom\endcsname{\_nopt{#2pt - .5\ht0 - .5\dp0 - \coordbuf}}%
+    \_xp\xdef\csname point@#4.left\endcsname{\_nopt{#1pt - .5\wd0 - \coordhbuf}}%
+    \_xp\xdef\csname point@#4.top\endcsname{\_nopt{#2pt + .5\ht0 + .5\dp0 + \coordvbuf}}%
+    \_xp\xdef\csname point@#4.right\endcsname{\_nopt{#1pt + .5\wd0 + \coordhbuf}}%
+    \_xp\xdef\csname point@#4.bottom\endcsname{\_nopt{#2pt - .5\ht0 - .5\dp0 - \coordvbuf}}%
     \_xp\xdef\csname point@#4.xcenter\endcsname{\_nopt{#1pt}}%
     \_xp\xdef\csname point@#4.ycenter\endcsname{\_nopt{#2pt}}%
     \_pdfdraw_updatedimens{\csname point@#4.left\endcsname}{\csname point@#4.top\endcsname}%
@@ -205,42 +228,19 @@
     \fi%
 }
 
+\def\_unpackinternalcoords#1#2#3#4{%
+    \def#1{#3}%
+    \def#2{#4}%
+}
 
-%\def\drawpath#1#2#3#4{%
-%    \edef\_regA{\_getcoordvalue{\_id#1}}%
-%    \edef\_regB{\_getcoordvalue{\_id#2}}%
-%    \edef\_regC{\_getcoordvalue{\_id#3}}%
-%    \edef\_regD{\_getcoordvalue{\_id#4}}%
-%    %\computesqrt{\_add{\_square{\_subtract{\_regC}{\_regA}}}{\_square{\_subtract{\_regD}{\_regB}}}}\_regF\_regE%
-%    \evaldef\_regF{\SQRT{(\_regC-\_regA)^2 + (\_regD-\_regB)^2}}%
-%    \evaldef\_regE{1/ \_regF}%
-%    \pdfliteral{%
-%        q
-%        \_pdfdraw_strokewidth\space w
-%        1 j 1 J
-%        q
-%        \_multiply{\_subtract{\_regC}{\_regA}}{\_regE} \_multiply{\_subtract{\_regD}{\_regB}}{\_regE}
-%        \_multiply{\_subtract{\_regB}{\_regD}}{\_regE} \_multiply{\_subtract{\_regC}{\_regA}}{\_regE}
-%        \_regA\space\_regB\space cm
-%        0 0 m
-%        \_regF\space 0 l
-%        S
-%        %\_pdfdraw_moveto{\_regA}{\_regB}
-%        %\_pdfdraw_lineto{\_regC}{\_regD}
-%        Q
-%        \_multiply{\_subtract{\_regC}{\_regA}}{\_regE} \_multiply{\_subtract{\_regD}{\_regB}}{\_regE}
-%        \_multiply{\_subtract{\_regB}{\_regD}}{\_regE} \_multiply{\_subtract{\_regC}{\_regA}}{\_regE}
-%        \_regC\space\_regD\space cm
-%        %0 0 m %-2 1 l 0 0 m -2 -1 l S
-%        \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{-2}{1} \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{-2}{-1}
-%        S
-%        Q
-%    }%
-%}
+\def\_gettransformedcoords#1#2#3#4{%
+    \expanded{\unexpanded{\_unpackinternalcoords{#1}{#2}}\_pdfdraw_transform{#3}{#4}}%
+}
 
-\_pdfdraw_addaffinetransform{0.707}{0.707}{-0.707}{0.707}{0}{0}
+%\_pdfdraw_addaffinetransform{0.707}{0.707}{-0.707}{0.707}{100}{0}
+\_pdfdraw_addaffinetransform{1.5}{0}{0}{1.5}{0}{0}
 
-\def\drawpath#1#2#3#4{%
+\def\drawpath#1#2#3#4#5#6{%
     \edef\_regA{\_getcoordvalue{\_id#1}}%
     \edef\_regB{\_getcoordvalue{\_id#2}}%
     \edef\_regC{\_getcoordvalue{\_id#3}}%
@@ -248,36 +248,71 @@
     %\computesqrt{\_add{\_square{\_subtract{\_regC}{\_regA}}}{\_square{\_subtract{\_regD}{\_regB}}}}\_regF\_regE%
     \evaldef\_regF{\SQRT{(\_regC-\_regA)^2 + (\_regD-\_regB)^2}}%
     \evaldef\_regE{1/ \_regF}%
+    \_gettransformedcoords\_regG\_regH{0}{0}%
+    \_gettransformedcoords\_regI\_regJ{\csname linecap@#5@wd\endcsname}{0}%
+    \_gettransformedcoords\_regJ\_regK{\csname linecap@#6@wd\endcsname}{0}%
+    \edef\_regH{\_nopt{\_regJ pt-\_regG pt}}%
+    \edef\_regG{\_nopt{\_regI pt-\_regG pt}}%
     \pdfliteral{%
         \_pdfdraw_strokewidth\space w
         1 j 1 J
+    }
+    \_pdfdraw_setaffinetransform%
+        {\_multiply{\_subtract{\_regC}{\_regA}}{\_regE}}{\_multiply{\_subtract{\_regD}{\_regB}}{\_regE}}%
+        {\_multiply{\_subtract{\_regB}{\_regD}}{\_regE}}{\_multiply{\_subtract{\_regC}{\_regA}}{\_regE}}%
+        {\_regA}{\_regB}%
+    \pdfliteral{\csname linecap@#5\endcsname}
+    \_pdfdraw_popaffinetransform%
+    \pdfliteral{
         q
         \_multiply{\_subtract{\_regC}{\_regA}}{\_regE} \_multiply{\_subtract{\_regD}{\_regB}}{\_regE}
         \_multiply{\_subtract{\_regB}{\_regD}}{\_regE} \_multiply{\_subtract{\_regC}{\_regA}}{\_regE}
         \_regA\space\_regB\space cm
-        0 0 m
-        \_regF\space 0 l
+        \csname linecap@#5@wd\endcsname\space 0 m
+        \_nopt{\_regF pt - \csname linecap@#6@wd\endcsname pt} 0 l
         S
-        %\_pdfdraw_moveto{\_regA}{\_regB}
-        %\_pdfdraw_lineto{\_regC}{\_regD}
         Q
     }%
-    \_pdfdraw_preaddaffinetransform%
+    \_pdfdraw_setaffinetransform%
         {\_multiply{\_subtract{\_regC}{\_regA}}{\_regE}}{\_multiply{\_subtract{\_regD}{\_regB}}{\_regE}}%
         {\_multiply{\_subtract{\_regB}{\_regD}}{\_regE}}{\_multiply{\_subtract{\_regC}{\_regA}}{\_regE}}%
         {\_regC}{\_regD}%
-    \pdfliteral{
-        %0 0 m %-2 1 l 0 0 m -2 -1 l S
-        \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{-2}{1} \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{-2}{-1}
-        S
-    }%
+    \pdfliteral{\csname linecap@#6\endcsname}
     \_pdfdraw_popaffinetransform%
 }
 
 \def\definelinecap#1#2#3{%
-    \_xp\edef\csname linecap@#1\endcsname{#3}%
-    \_xp\edef\csname linecap@#1@wd\endcsname{#2}%
+    \_xp\def\csname linecap@#1\endcsname{#2}%
+    \_xp\edef\csname linecap@#1@wd\endcsname{#3}%
 }
+
+\definelinecap{>}{%
+    \_pdfdraw_moveto{-2}{0} \_pdfdraw_lineto{0}{0} \_pdfdraw_lineto{-2}{1} \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{-2}{-1}
+    S
+}{2}
+
+\definelinecap{<}{%
+    \_pdfdraw_moveto{2}{0} \_pdfdraw_lineto{0}{0} \_pdfdraw_lineto{2}{1} \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{2}{-1}
+    S
+}{2}
+
+\definelinecap{>>}{%
+    \_pdfdraw_moveto{-4}{0} \_pdfdraw_lineto{0}{0}
+    \_pdfdraw_moveto{-2}{0} \_pdfdraw_lineto{-4}{1} \_pdfdraw_moveto{-2}{0} \_pdfdraw_lineto{-4}{-1}
+    \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{-2}{1} \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{-2}{-1}
+    S
+}{2}
+
+\definelinecap{<<}{%
+    \_pdfdraw_moveto{4}{0} \_pdfdraw_lineto{0}{0}
+    \_pdfdraw_moveto{2}{0} \_pdfdraw_lineto{4}{1} \_pdfdraw_moveto{2}{0} \_pdfdraw_lineto{4}{-1}
+    \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{2}{1} \_pdfdraw_moveto{0}{0} \_pdfdraw_lineto{2}{-1}
+    S
+}{2}
+
+\definelinecap{o}{%
+    \_pdfdraw_circle{0}{0}{1} S
+}{1}
 
 \def\diagrowbuf{10pt}
 \def\diagcolbuf{10pt}
@@ -401,11 +436,19 @@
         to={%
             name=_to,
             required%
+        },
+        left cap={%
+            name=_lcap,
+            default=<%
+        },
+        right cap={%
+            name=_rcap,
+            default=>%
         }%
     }{#1}%
     \expanded{\unexpanded{\_unpackcoords\_fromx\_fromy}\_from}\_nul%
     \expanded{\unexpanded{\_unpackcoords\_tox\_toy}\_to}\_nul%
-    \_diagarrow{\_fromx}{\_fromy}{\_tox}{\_toy}%
+    \_diagarrow{\_fromx}{\_fromy}{\_tox}{\_toy}{\_lcap}{\_rcap}%
 }
 
 \parindent=0pt
@@ -421,6 +464,7 @@
 %
 %There
 
+\say{Transform origin: \_pdfdraw_transform{0}{0}}%
 \drawdiagram{%
     Hello&There&My friend&Silly pup&I'm confused\cr
     $\displaystyle\sum$&Hey&There&DUDE&Me too\cr
@@ -428,7 +472,7 @@
     Hey\cr
 }{%
     \diagarrow{from={1,1}, to={2,4}}%
-    %\diagarrow{from={1,3}, to={2,4}}%
+    \diagarrow{from={1,1}, to={1,2}, right cap=>>, left cap=<<}%
     %\diagarrow{from={1,5}, to={4,1}}%
 }
 
