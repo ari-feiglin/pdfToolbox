@@ -191,12 +191,28 @@
     12pt=cmsl12
 }
 
+\addfont{ss}{%
+    default=cmss10,
+    8pt=cmss8,
+    9pt=cmss9,
+    10pt=cmss10,
+    12pt=cmss12
+}
+
 \addfont{tt}{%
     default=cmtt10,
     8pt=cmtt8,
     9pt=cmtt9,
     10pt=cmtt10,
     12pt=cmtt12
+}
+
+\addfont{sl}{%
+    default=cmsl10,
+    8pt=cmsl8,
+    9pt=cmsl9,
+    10pt=cmsl10,
+    12pt=cmsl12
 }
 
 \addfont{msam}{%
@@ -213,6 +229,13 @@
     10pt=msbm10
 }
 
+\addfont{eufm}{%
+    default=eufm10,
+    8pt=eufm8,
+    9pt=eufm9,
+    10pt=eufm10
+}
+
 \setfontandscale{rm}{10pt}
 \setfontfamily{0}{rm}
 \setfontfamily{1}{mi}
@@ -223,6 +246,15 @@
 \setfontfamily{6}{bf}
 \setfontfamily{7}{tt}
 \setfontfamily{8}{it}
+\setfontfamily{9}{ss}
+\setfontfamily{10}{sl}
+\setfontfamily{11}{eufm}
+\def\bf{\setfont{bf}}
+\def\it{\setfont{it}\fam=8\relax}
+\def\bb{\fam=5\relax}
+\def\sf{\setfont{ss}\fam=9\relax}
+\def\sl{\setfont{sl}\fam=10\relax}
+\def\frak{\setfont{eufm}\fam=11\relax}
 
 \def\_{\_}
 

@@ -14,18 +14,24 @@
     \fi%
 }
 
-\newif\if_breakpage
+\newif\if_recheck
 \def\_getsplitdim#1{%
     \ifdim\dimexpr\_spaceleft-#1\relax>\ht\_contentbox%
         \edef\_splitdim{\the\ht\_contentbox}%
-        \_breakpagefalse%
+        \_recheckfalse%
     \else%
         \ifdim\dimexpr\_spaceleft-#1\relax<\z@%
-            \par\vfill\break%
+            \if_recheck%
+                \vfil\break\vfilneg%
+                \_recheckfalse%
+            \else%
+                \null\par%
+                \_rechecktrue%
+            \fi%
             \_getsplitdim{#1}%
         \else%
             \edef\_splitdim{\the\dimexpr\_spaceleft-#1\relax}%
-            \_breakpagetrue%
+            \_recheckfalse%
         \fi%
     \fi%
 }

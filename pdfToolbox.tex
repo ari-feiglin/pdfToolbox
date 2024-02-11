@@ -1,6 +1,8 @@
 \expandafter\edef\csname _ catcode\endcsname{\the\catcode`_}
 \expandafter\edef\csname @ catcode\endcsname{\the\catcode`@}
 
+\let\olduscore=\_
+
 \input pdfToolbox-utils
 
 \_checkloaded{pdfToolbox}
@@ -13,6 +15,8 @@
 \input pdfData
 \input pdfGraphics
 \input pdfDstruct
+
+\let\_=\olduscore
 
 \catcode`_=\csname _ catcode\endcsname
 \catcode`@=\csname @ catcode\endcsname

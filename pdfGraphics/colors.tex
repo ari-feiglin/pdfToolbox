@@ -212,7 +212,8 @@
     }%
 }
 
-\long\def\fakebold#1{\pdfliteral{2 Tr .4 w}#1\pdfliteral{0 Tr}}
+\long\def\_fakebold[#1]#2{\pdfliteral{2 Tr #1 w}#2\pdfliteral{0 Tr}}
+\def\fakebold{\_ifnextchar[ {\_fakebold}{\_fakebold[.4]}}
 \def\flip#1{{\setbox0=\hbox{#1}\kern\wd0\pdfsave\pdfliteral{-1 0 0 1 0 0 cm}\rlap{#1}\pdfrestore}}
 
 \definecolormacro{red}{rgb}{1 0 0}
