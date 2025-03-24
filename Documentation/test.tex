@@ -1,0 +1,23 @@
+\input pdftoolbox
+
+\def\puthi#1{Hello (#1)}
+
+\def\getinput#1{%
+    \mapkeys{
+        first={
+            name=fst,
+            required,
+            definition=\edef,
+            mapping=\puthi
+        },
+        second={
+            name=snd,
+            default=S. Lurp%
+        }%
+    }{#1}%
+}
+
+\getinput{first=pdftoolbox}
+\say{(\fst) (\snd)}
+
+\bye

@@ -1,0 +1,96 @@
+\input pdfToolbox-utils
+\input pdfGraphics/colors
+
+\_checkloaded{colorboxes}
+
+\newbox\_contentbox
+\newbox\_splitbox
+
+\def\_spaceleft{%
+    \ifdim\pagetotal=\z@%
+        \dimexpr\vsize - \topskip\relax%
+    \else%
+        \dimexpr \pagegoal - \pagetotal - \topskip\relax%
+    \fi%
+}
+
+\newif\if_recheck
+\def\_getsplitdim#1{%
+    \ifdim\dimexpr\_spaceleft-#1\relax>\ht\_contentbox%
+        \edef\_splitdim{\the\ht\_contentbox}%
+        \_recheckfalse%
+    \else%
+        \ifdim\dimexpr\_spaceleft-#1\relax<\z@%
+            \if_recheck%
+                \vfil\break\vfilneg%
+                \_recheckfalse%
+            \else%
+                \null\par%
+                \_rechecktrue%
+            \fi%
+            \_getsplitdim{#1}%
+        \else%
+            \edef\_splitdim{\the\dimexpr\_spaceleft-#1\relax}%
+            \_recheckfalse%
+        \fi%
+    \fi%
+}
+
+%   Splits the content box to fit into pages.
+%   #1: Total vertical buffer
+%   #2: Output routine for new box
+\def\_splitcontentbox#1#2{{%
+    \splittopskip=\z@%
+    \boxmaxdepth=\z@%
+    \offinterlineskip%
+    \unless\ifvoid\_contentbox%
+        \_getsplitdim{#1}%
+        \setbox\_splitbox = \vsplit\_contentbox to\_splitdim\relax%
+        \setbox0=\vbox{#2}%
+        \vbox to\z@{\copy0\vss}%
+        \kern\ht0\relax\penalty\z@%
+        \_splitcontentbox{#1}{#2}%
+    \fi%
+}}
+
+\def\_ppbuf{0pt}
+\def\_bppbox#1#2#3[#4]{%
+    \def\_colorcontentbox{%
+        \hbox{\curvedcolorbox{#2}{#1}{\_setcolor{}{#3}\box\_splitbox}{#4}}%
+    }
+    \par%
+    \kern\_ppbuf\relax%
+    \null\par% Move the kern from recent contributions to MVL
+    \setbox\_contentbox=\vbox\bgroup%
+        \hsize=\dimexpr\hsize-\_actual_curve_buf * 2\relax%
+}
+
+\def\bppbox#1#2#3{%
+    \_ifnextchar[ {\_bppbox{#1}{#2}{#3}}{\_bppbox{#1}{#2}{#3}[....]}%
+}
+
+\def\eppbox{%
+    \egroup%
+    \_splitcontentbox{2\_actual_curve_buf}\_colorcontentbox%
+    \vskip\_ppbuf\relax%
+}
+
+\def\pprulewd{2.5pt}
+\def\pprulevbuf{5pt}
+\def\pprulehbuf{7pt}
+
+\def\blinedppbox#1#2#3{%
+    \def\_colorcontentbox{{%
+        \setbox0=\hbox{{\_setcolor{}{#2}\vrule width\pprulewd\relax}\kern\pprulehbuf\vbox{\kern\pprulevbuf\_setcolor{}{#3}\box\_splitbox\kern\pprulevbuf}\kern\pprulehbuf}%
+        \hbox{{\_setcolor{}{#1}\vrule height\ht0 width\wd0 depth\dp0}\kern-\wd0\box0}%
+    }}%
+    \par\kern\_ppbuf\relax%
+    \null\par%
+    \setbox\_contentbox=\vbox\bgroup%
+        \hsize=\dimexpr\hsize-\pprulewd - \pprulehbuf * 2\relax%
+}
+\def\elinedppbox{%
+    \egroup%
+    \_splitcontentbox{2\dimexpr\pprulevbuf\relax}\_colorcontentbox%
+    \vskip\_ppbuf\relax%
+}

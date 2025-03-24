@@ -1,0 +1,258 @@
+\section{pdfDstruct}
+
+The pdfDstruct section of the \pdftoolbox{} toolbox is for managing the structure of your documents.
+
+\subsection{Layout}
+
+In {\tt pdfDstruct/layout.tex}, \pdftoolbox{} provides a macro \macro\setlayout\anchormacro\setlayout{} for setting up the layout of the document.
+The use is
+
+\macrousage\setlayout {[page width=<wd>,] [page height=<ht>,] [horizontal margin=<mwd>,]
+[vertical margin=<vwd>]}/emacrousage
+
+\subsection{Hyperlinks}
+
+In {\tt pdfDstruct/hyperlinks.tex}, \pdftoolbox{} provides macros for creating and managing hyperlinks.
+
+\macroexp{\anchor [<type>]{<name>}}
+Creates an anchor (a reference, if you will) to the current point in the document.
+\emacroexp
+
+\macroexp{\gotoanchor [<type>]{<name>}{<material>}}
+Creates a clickable field containing {\it material} which, when clicked, will go to the anchor labeled with the type {\it type} and name {\it name}.
+\emacroexp
+
+\macroexp{\url {<url>}{<material>}}
+Creates a clickable field containing {\it material} which, when clicked, will redirect to the url {\it url}.
+\emacroexp
+
+\macroexp{\createbordertype {<type>}{<color>}{<wd>}}
+Sets the border type of anchor type {\it type} to be of color {\it color} and width {\it wd}.
+Urls have border type {\tt url}.
+If a type doesn't have a specified border type, the {\tt default} one is used.
+\emacroexp
+
+\subsection{Fonts}
+
+In {\tt pdfDstruct/fonts.tex}, \pdftoolbox{} provides macros for accessing and controlling fonts.
+
+\macroexp{\addfont {<name>}{<sizes>}}
+This will add a font by the name {\it name} so that it is accessible by \pdftoolbox.
+{\it sizes} is a key-value dictionary which specifies the font codes for different sizes of the font.
+For example, in {\tt pdfDstruct/fonts.tex} is the usage:
+
+\beginhi \color{white}
+\addfont{rm}{%
+    default=cmr10,
+    5pt=cmr5,
+    6pt=cmr6,
+    7pt=cmr7,
+    8pt=cmr8,
+    9pt=cmr9,
+    10pt=cmr10,
+    12pt=cmr12,
+    17pt=cmr17
+}
+\endhi
+
+So now \pdftoolbox{} has access to the computer modern roman font ({\tt cmr}) at the sizes specified.
+The purpose of the default size is for when a size is not available.
+For example, requesting the {\tt rm} font at size $13$ will give you {\tt cmr10 at 13pt}.
+The default size is required.
+
+\pdftoolbox{} provides the following fonts:
+
+\quitvmode\vbox{\tabskip=.5cm\halign{&\hfil#:\tabskip=0pt&\ \tt#\hfil\tabskip=.5cm\cr
+rm&cmr&it&cmti&bf&cmbx&sc&cmcsc&mi&cmmi&sy&cmsy&ex&cmex&sl&cmsl\cr
+ss&cmss&tt&cmtt&msam&msam&msbm&msbm&eufm&eufm&rsfs&rsfs\cr
+}}
+\emacroexp
+
+\macroexp{\applyfontcode <font code>}
+Applies the font specified by {\it font code}.
+For example, \inlinecode|\applyfontcode cmr10| will set the font to {\tt cmr10}.
+\emacroexp
+
+\macroexp{\setfontfamily {<font>}{<family>}}
+Sets math font family {\it family} to the font {\it font} (which is specified by \gotomacro\addfont).
+For example, \inlinecode|\setfontfamily{rm}{0}| sets the alpha-numeric font family to {\tt rm}.
+\emacroexp
+
+\macroexp{\setfont {<font>}}
+Sets the current font to {\it font}.
+The current font is stored in the macro \macro\currfont\anchormacro\currfont.
+\emacroexp
+
+\macroexp{\setscale {<scale>}}
+Sets the current font scale to {\it scale}.
+The current font scale is stored in the macro \macro\currscale\anchormacro\currscale.
+\emacroexp
+
+\macroexp{\setfontandscale {<font>}{<scale>}}
+Sets the current font to {\it font} and scale to {\it scale}.
+\emacroexp
+
+\pdftoolbox{} also provides the following font switches (which are simple wrappers around \macro\setfont{} which also set \macro\fam):
+
+\hbox to\hsize{\hfil\inlinecode|\bf, \it, \bb, \sf, \sl, \frak, \scr|\hfil}
+
+\macroexp{\mathfonttable {<family>}[<offset>]{<table>}}
+The \macro\mathfonttable{} macro's purpose is to define multiple mathematical characters for the same family.
+{\it table} consists of a sequence of macros followed by numbers (e.g. \inlinecode|\square0|) which correspond to the name of the macro and the math type (in this case $0$: ordinary/\macro\mathord).
+\macro\mathfonttable{} will iterate over {\it table} and \macro\mathchardef{} the macro to be equal to the character at the current position in family {\it family} of the type specified.
+If {\it offset} is specified, it will start iterating over the family starting from the offset.
+
+More explicitly, if {\it family} is {\tt X} and the $\tt i$th index in the table is \inlinecode|\X N|, then the macro does essentially
+
+\hbox to\hsize{\hfil\inlinecode|\mathchardef\X = XNi|\hfil}
+
+To skip over an index, simply write \macro\__{}.
+\emacroexp
+
+Using \macro\mathfonttable, \pdftoolbox{} defines the following:
+
+{\tabskip=2pt\halign{&\hfil\def\X{#}\_xp\macro\X: $\X$\hfil\cr
+    \boxdot&\boxplus&\boxtimes&\square\cr
+    \blacksquare&\diamond&\blackdiamond&\rotateclockwise\cr
+    \rotatecounterclockwise&\rightleftharpoons&\leftrightharpoons&\boxminus\cr
+    \Vdash&\Vvdash&\vDash&\twoheadrightarrow\cr
+    \twoheadleftarrow&\leftleftarrows&\rightrightarrows&\upuparrows\cr
+    \downdownarrows&\uprightharpoon&\downrightharpoon&\upleftharppon\cr
+    \downleftharpoon&\rightarrowtail&\leftarrowtail&\leftrightarrows\cr
+    \rightleftarrows&\Lsh&\Rsh&\rightsquigarrow\cr
+    \leftrightsquigarrow&\looparrowleft&\looparrowright&\circeq\cr
+    \succsim&\gtrsim&\gtrapprox&\multimap\cr
+    \therefore&\because&\Doteq&\triangleq\cr
+    \precsim&\lesssim&\lessapprox\cr
+}}
+
+\subsection{Hooks}
+
+\pdftoolbox{} provides a tool, inspired by \LaTeX, called {\it hooks} (source in {\tt pdfDstruct/hooks.tex}).
+Hooks are simply snippets of code that can be inserted into macros and then altered later.
+An example is given at the end of this section.
+
+\macroexp{\createhook {<name>}}
+Creates a hook by the name of {\it name}.
+\emacroexp
+
+\macroexp{\appendtohook {<name>}{<code>}}
+Appends {\it code} to the hook specified by {\it name}.
+\emacroexp
+
+\macroexp{\prependtohook {<name>}{<code>}}
+Prepends {\it code} to the hook specified by {\it name}.
+\emacroexp
+
+\macroexp{\callhook {<name>}}
+Calls the hook specified by {\it name}.
+\emacroexp
+
+\pdftoolbox{} provides a builtin hook called {\tt end} which is executed by \macro\bye.
+Throughout the document, you can add macros to an array called {\tt document data}, then all these definitions are written to the file \inlinecode|\jobname.data| by the {\tt end} hook.
+
+Specifically, you can use the \macro\docdata\anchormacro\docdata{} macro to add a macro to the document's data, e.g. if you have a macro \macro\name{} which has the author's name (say, S. Lurp), you can do
+\inlinecode|\docdata\name|, and this will write the line \inlinecode|\gdef\name{S. Lurp}| to the data file.
+Then at the beginning of the document next compilation, you can load all definitions in the data file.
+
+\subsection{Indices}
+
+In {\tt pdfDstruct/index.tex}, \pdftoolbox{} provides macros for creating an index.
+The index is organized into {\it categories} and {\it items} within each category, and an associated {\it value}.
+A category may be something like ``manifolds'' and an item within this category may be ``topological'' which has a value corresponding to the page number where topological manifolds are defined.
+
+\macroexp{\indexize {<options>}}
+Adds an item to the index, specified by options, which has fields:
+\benum
+    \item {\tt category} (required): the category of the item;
+    \item {\tt item}: the item of the item;
+    \item {\tt value} (required): the value of the item;
+    \item {\tt expand value} (valueless): added if {\tt value} should be expanded (e.g. if {\tt value} is a macro corresponding to the page number, it needs to be expanded);
+    \item {\tt add hyperlink} (valueless): whether or not the item's values should be hyperlinked.
+\eenum
+\emacroexp
+
+\macroexp{\seealso {<options>}}
+Adds a ``see also'' item to the index: one which redirects to another index item.
+{\it options} is a map which has fields:
+\benum
+    \item {\tt category} (required): the category of the item;
+    \item {\tt item}: the item of the item;
+    \item {\tt dest} (required): the destination of the ``see also'' (e.g. if the item is ``wedge product'', you may want to also see ``exterior product'', and so the destination may be ``exterior product'');
+    \item {\tt hyperlink}: an anchor to link to;
+    \item {\tt index link} (valueless): a flag of whether or not the anchor is within the index.
+\eenum
+To link to an item within the index, suppose of category {\tt C} and item {\tt I}, set {\tt hyperlink} to {\tt C:I} (or just {\tt C:} if {\tt I} is empty), and set {\tt index link}.
+\emacroexp
+
+\macroexp{\index}
+Prints the index.
+\emacroexp
+
+\macroexp{\addtoindex {<category>}[<item>]}
+Adds an item to the index of category {\it category} and item {\it item}.
+Its value is \macro\@defaultindexval{} (by default \inlinecode|\the\pageno|), and {\tt expand value} and {\tt add hyperlink} are set.
+\emacroexp
+
+\subsection{Lists}
+
+In {\tt pdfDstruct/lists.tex}, \pdftoolbox{} provides macros for creating lists of text.
+
+There are two types of lists: unenumerated and enumerated.
+Unenumerated lists start with \macro\blist\anchormacro\blist{} and end with \macro\elist\anchormacro\elist.
+Each item begins with \macro\item\anchormacro\item.
+The symbol used for each bullet point is determined by the nested depth of the list.
+For a depth of $N$, the symbol used is stored in the macro \macro\liststyleN\anchormacro\liststyle.
+
+Similarly enumerated lists start with \macro\benum\anchormacro\benum{} and end with \macro\elist\anchormacro\eenum.
+Each item begins with \macro\item, and the style for the enumeration is determined by the depth of the list.
+For a depth of $N$, the $n$th element is styled with \inlinecode|\enumstyleN{n}|.
+
+To add text in between items (not as part of the list), you can use \macro\mtext\anchormacro\mtext.
+
+\subsection{Table of Contents}
+
+In {\tt pdfDstruct/tableofcontents.tex}, \pdftoolbox{} provides macros for creating and displaying tables of content.
+
+\macroexp{\addtoccontent {<title>}{<value>}{<depth>}{<anchor>}}
+Adds content to the table of contents whose title is {\it title} (e.g. chapter name), value is {\it value} (e.g. page number), depth is {\it depth}, and is linked to the anchor {\it anchor}.
+The depth {\it depth} determines the style used in the table (see \gotomacro\settocdepthformat).
+\emacroexp
+
+\macroexp{\tableofcontents}
+Prints the table of contents.
+\emacroexp
+
+\macroexp{\settocdepthformat {<depth>}{<options>}}
+Sets the format of the table of contents at the depth {\it depth}.
+{\it options} is a map with the following fields:
+\blist
+    \item {\tt title}: the style switch for the title (default is \inlinecode|\setfont{rm}|);
+    \item {\tt value}: the style switch for the value (default is \inlinecode|\setfont{rm}|);
+    \item {\tt leader}: the leader to add between the title and value (default is nothing);
+    \item {\tt indent}: the amount to indent the line (default is 0pt);
+    \item {\tt buffer}: the amount of buffer to add around the line (default is 0pt).
+\elist
+\emacroexp
+
+\pdftoolbox{} provides three types of sectioning: sections, subsections, and subsubsections.
+Each has a counter in its name (e.g. {\tt section}), and a macro with the current section name (e.g. \macro\currsection).
+
+\macroexp{\section (*){<title>}}
+Adds a section to the document.
+If the asterisk is added, the section is a ``pseudosection'': the section counter is not incremented and not displayed, and the section is not added to the table of contents.
+Otherwise the section counter is incremented and displayed, and the section is added to the table of contents.
+\emacroexp
+
+\macroexp{\subsection (*){<title>}}
+Adds a subsection to the document.
+If the asterisk is added, the subsection is a ``pseudosubsection'': the subsection counter is not incremented and not displayed, and the subsection is not added to the table of contents.
+Otherwise the subsection counter is incremented and displayed, and the subsection is added to the table of contents.
+\emacroexp
+
+\macroexp{\subsubsection (*){<title>}}
+Adds a subsubsection to the document.
+If the asterisk is added, the subsubsection is a ``pseudosubsubsection'': the subsubsection counter is not incremented and not displayed, and the subsubsection is not added to the table of contents.
+Otherwise the subsubsection counter is incremented and displayed, but the subsubsection is still not added to the table of contents.
+\emacroexp
+

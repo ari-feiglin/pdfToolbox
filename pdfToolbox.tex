@@ -1,0 +1,23 @@
+\expandafter\edef\csname _ catcode\endcsname{\the\catcode`_}
+\expandafter\edef\csname @ catcode\endcsname{\the\catcode`@}
+
+\let\olduscore=\_
+
+\input pdfToolbox-utils
+
+\_checkloaded{pdfToolbox}
+
+\def\pdfToolboxversion{0.0.1}
+\def\pdfToolboxdate{September 20, 2023}
+
+\say{This is pdfToolbox, version \pdfToolboxversion (\pdfToolboxdate)}
+
+\input pdfData
+\input pdfGraphics
+\input pdfDstruct
+
+\let\_=\olduscore
+
+\catcode`_=\csname _ catcode\endcsname
+\catcode`@=\csname @ catcode\endcsname
+

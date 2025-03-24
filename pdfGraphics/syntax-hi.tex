@@ -1,0 +1,253 @@
+\input pdfGraphics
+\input pdfData
+
+\createarray{catcodes}
+\createarray{colors}
+\createarray{swapped}
+\createarray{initcolors}
+\appendarraymanyvalued{catcodes}{0}{abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_}
+\appendarraymanyvalued{colors}{rgb{1 0 0}}{{fun}{let}{_prim_print}{def}{if}{for}{int}{float}{double}{short}{char}{long}{while}{main}{printf}{return}{exit}}
+\appendarraymanyvalued{colors}{rgb{0 .8 0}}{1234567890}
+\appendarraymanyvalued{colors}{rgb{1 0 0}}{{pt}{cm}{in}{mu}{sp}}
+%\appendarraymanyvalued{colors}{.2 0 0}{*+-<>=}
+
+\def\_nextother{\_nextother}
+\appendarray{swapped}{{ }{\_syntaxspace}}
+\appendarray{swapped}{{`}{\backtick}}
+\chardef\backtick=0
+\appendarray{swapped}{{:}{$\mathop{:}$}}
+\appendarray{swapped}{{-}{$\vcenter{\hbox{\tt-}}$}}
+\bgroup\catcode`\^^I=11\relax\lowercase{\egroup\appendarray{swapped}{{^^I}{\hiindent}}}
+\bgroup\catcode`\^^M=11\relax\lowercase{\egroup\appendarray{swapped}{{^^M}{%
+    \par\egroup\_output_box%
+    \setbox\_outputbox=\vtop\bgroup%
+        \hsize=\dimexpr\hsize - \leftskip - \rightskip - \_output_indent - 15pt - \@numhskip\relax%
+        \hangindent=.5cm\relax \hangafter=1\relax%
+        \raggedright%
+        \baselineskip=15pt%
+        \tolerance=10000\relax \hbadness=10000\relax%
+        \_tokcount=0\relax%
+        \quitvmode%
+}}}
+\bgroup\lccode`\?=`\\ \lowercase{\egroup\appendarray{catcodes}{{?}{-1}}}
+\bgroup\lccode`\?=`\\ \lowercase{\egroup\appendarray{initcolors}{{?}{\_nextother}{rgb{1 0 0}}}}
+\bgroup\lccode`\?=`\# \lowercase{\egroup\appendarray{colors}{{?}{rgb{0 .3 0}}}}
+\bgroup\lccode`\?=`\& \lowercase{\egroup\appendarray{colors}{{?}{rgb{0 .8 0}}}}
+%\bgroup\lccode`\?=`\% \catcode`\^^M=11\relax\lowercase{\egroup\appendarray{initcolors}{{?}{^^M}{rgb{.6 .7 .6}}}}
+\appendarray{initcolors}{{"}{"}{rgb{.6 .6 .3}}}
+
+
+\newif\ifstrequals
+\def\_ifstrequals#1#2{%
+    \edef\_regA{\detokenize{#1}}\edef\_regB{\detokenize{#2}}%
+    \ifx\_regA\_regB \strequalstrue\else\strequalsfalse\fi%
+}
+
+\long\def\_get_second_conditionally#1#2#3#4{%
+    \_ifstrequals{#2}{#3}%
+    \ifstrequals%
+        \def#1{#4}%
+    \fi%
+}
+
+\long\def\_get_second_third_conditionally#1#2#3#4#5#6{%
+    \_ifstrequals{#3}{#4}%
+    \ifstrequals%
+        \def#1{#5}%
+        \def#2{#6}%
+    \fi%
+}
+
+\def\_get_catcode#1{%
+    \def\_catcode{1}%
+    \long\def\_arr_index##1{\_get_second_conditionally\_catcode{#1}##1}%
+    \executearray{catcodes}%
+}
+
+\def\_get_initcolor#1{%
+    \let\_initcolor=\_nul%
+    \let\_end_initcolor=\_nul%
+    \long\def\_arr_index##1{\_get_second_third_conditionally\_end_initcolor\_initcolor{#1}##1}%
+    \executearray{initcolors}%
+}
+
+\newcount\_tokcount
+\newtoks\_currtoken
+\newtoks\_currprinttoken
+\newif\ifpotentialescape
+
+\def\_catcode_normal{0}
+\def\_catcode_potential_escape{-1}
+\def\_potential_escape_token{endhi}
+
+\def\_get_next_tok#1#2{%
+    \advance\_tokcount by 1\relax%
+    \global\let\_next=\_get_next_tok%
+    \_get_catcode{#2}%
+    \ifstrcases{\_catcode}%
+        \_catcode_normal{%
+            \_currtoken\_xp{\the\_currtoken#2}%
+            \_currprinttoken\_xp{\the\_currprinttoken#2\allowbreak}%
+        }%
+        \_catcode_potential_escape{%
+            \ifpotentialescape%
+                \_print{\_potential_escape_char}{\_potential_escape_char}%
+                \_print{\the\_currprinttoken}{\the\_currtoken}%
+                \_print{#2\allowbreak}{#2}%
+                \_currtoken={}%
+                \_currprinttoken={}%
+                \potentialescapefalse%
+            \else%
+                \_print{\the\_currprinttoken\allowbreak}{\the\_currtoken}%
+                \_currtoken={}%
+                \_currprinttoken={}%
+                \def\_potential_escape_char{#2}%
+                \potentialescapetrue%
+            \fi%
+        }%
+        \default{%
+            \ifpotentialescape%
+                \expanded{\unexpanded{\_ifstrequals}{\the\_currtoken}{\_potential_escape_token}}%
+                \ifstrequals%
+                   \gdef\_next{\_xp\endhi\_gobble}%
+                \else%
+                   \potentialescapefalse%
+                   \_print{\_potential_escape_char}{\_potential_escape_char}%
+                   \_xp\_ifstrequals\_xp{\the\_currtoken}{}%
+                   \unless\ifstrequals \_print{\the\_currprinttoken}{\the\_currtoken}\fi%
+                   \_print{#2}{#2}%
+                   \_currtoken={}%
+                   \_currprinttoken={}%
+                \fi%
+            \else%
+                \_xp\_ifstrequals\_xp{\the\_currtoken}{}%
+                \unless\ifstrequals \_print{\the\_currprinttoken}{\the\_currtoken}\fi%
+                \_print{#2}{#2}%
+                \_currtoken={}%
+                \_currprinttoken={}%
+            \fi%
+        }%
+    \endifcases%
+    \_next{}%
+}
+
+%\def\color#1#2{\pdfliteral{#1 rg #1 RG}#2\pdfliteral{0 0 0 rg 0 0 0 RG}}
+
+\newif\ifcolorinit
+\colorinitfalse
+\def\_print_token#1#2{%
+    \def\_tok_swap{#1}%
+    \long\def\_arr_index##1{\_get_second_conditionally\_tok_swap{#2}##1}%
+    \executearray{swapped}%
+    \ifcolorinit%
+        {\_xp\_setcolor\_xp{\_xp}\_xp{\_nextcolor}\_tok_swap}%
+        \unless\ifx\_end_initcolor\undefined%
+            \ifx\_nextother\_end_initcolor%
+                \global\colorinitfalse%
+            \else%
+                \_xp\_ifstrequals\_xp{\_end_initcolor}{#2}%
+                \ifstrequals%
+                    \global\colorinitfalse%
+                \fi%
+            \fi%
+        \fi%
+    \else%
+        \_get_initcolor{#2}%
+        \unless\ifx\_initcolor\_nul%
+            {\_xp\_setcolor\_xp{\_xp}\_xp{\_initcolor}\_tok_swap}%
+            \global\let\_nextcolor=\_initcolor%
+            \global\let\_end_initcolor=\_end_initcolor%
+            \global\colorinittrue%
+        \else%
+            \let\_tok_color=\_nul%
+            \long\def\_arr_index##1{\_get_second_conditionally\_tok_color{#2}##1}%
+            \executearray{colors}%
+            \ifx\_tok_color\_nul \_tok_swap\else{\_xp\_setcolor\_xp{\_xp}\_xp{\_tok_color}\_tok_swap}\fi%
+        \fi%
+    \fi%
+}
+
+\def\_print#1#2{%
+    \def\_print_temp{#1}%
+    \_xp\_print_token\_xp\_print_temp\_xp{#2}%
+}
+
+\newbox\_hibox
+\long\def\_beginhi#1{\bgroup%
+    \tt%
+    \frenchspacing%
+    \def\do##1{\catcode`##1=11\relax}\dospecials%
+    \catcode`\^^M=11%
+    \catcode`\^^I=11%
+    #1%
+    \setbox\_hibox=\vbox\bgroup%
+        \kern\_output_indent%
+        \lineskiplimit=0pt%
+        \lineskip=0pt%
+        \parindent=0pt%
+        %\setbox\_outputbox=\hbox\bgroup%
+        \setbox\_outputbox=\vtop\bgroup%
+            \hsize=\dimexpr\hsize - \leftskip - \rightskip - \_output_indent - 15pt - \@numhskip\relax%
+            \hangindent=.5cm\relax \hangafter=1\relax%
+            \raggedright%
+            \tolerance=10000\relax \hbadness=10000\relax%
+            \_tokcount=0\relax%
+            \quitvmode%
+            \_xp\_get_next_tok\_xp{\_xp}%
+}
+
+\def\beginhi{\_getline\_beginhi}
+
+\def\syntax@buf{0cm}
+\def\syntaxbg{rgb{.1 .1 .1}}
+\def\endhi{%
+    \egroup\egroup%\kern\_output_indent\egroup%
+    \par%
+    \vskip\syntax@buf\relax%
+    \hbox to\dimexpr\wd\_hibox + \_output_indent\relax{%
+        {\_xp\_setcolor\_xp{\_xp}\_xp{\syntaxbg}\vrule height\ht\_hibox width\dimexpr\wd\_hibox+\_output_indent\relax depth\dp\_hibox}%
+        \kern-\wd\_hibox\box\_hibox%
+    }%
+    \par%
+    \box\_hibox%
+    \egroup%
+    \vskip\syntax@buf\relax%
+}
+
+\newbox\_outputbox
+\newcount\outputline
+\newif\ifglobcount
+\def\_output_indent{1pt}
+\def\_output_box{%
+    \ifglobcount%
+        \global\advance\outputline by 1%
+    \else%
+        \advance\outputline by 1%
+    \fi%
+    %\hbox to\dimexpr\hsize - \leftskip - \rightskip - \_output_indent\relax{%
+    \hbox{%
+        \_output_line_number{\the\outputline}\strut\box\_outputbox%
+    }%
+    \kern\_output_indent%
+}
+
+\font\eighttt=cmtt8
+\def\@numhskip{1em}
+\def\_output_line_number#1{\hbox to15pt{\eighttt\hfil#1}\hskip\@numhskip}
+
+
+\font\threett=cmtt8 at 5pt
+{\setbox0=\hbox{\tt\ \ \ \ }\xdef\hiindent@width{\the\wd0}}
+{\setbox0=\hbox{\tt\ }\xdef\space@width{\the\wd0}}
+
+\def\hiindent{\quitvmode\hbox to\hiindent@width{\hss$\vcenter{\hbox{\threett>}}$\hss}}
+\def\hiindent{\ \ \ \ \_iffirstchar{\advance\hangindent by\hiindent@width}}
+\def\_syntaxspace{\ \_iffirstchar{\advance\hangindent by\space@width}}
+
+\def\_iffirstchar#1{%
+    \ifnum\_tokcount=1 %
+        \_tokcount=0\relax%
+        #1%
+    \fi%
+}
+

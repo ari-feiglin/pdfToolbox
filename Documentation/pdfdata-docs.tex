@@ -1,0 +1,365 @@
+The pdfData section of the \pdftoolbox{} toolbox is meant for creating instances of and manipulating datatypes.
+
+\subsection{Arrays}
+
+In the {\tt pdfData/arrays} file, \pdftoolbox{} defines various macros for creating and manipulating arrays.
+\pdftoolbox{} defines two types of arrays, which are different in the macros used for them and the way they are stored internally.
+\blist
+    \item (Normal) arrays: these arrays are stored in the traditional way: an array $[1;2;3]$ is stored in a macro whose meaning is equivalent to \inlinecode|\X{1}\X{2}\X{3}|.
+    Manipulation of the array is done by defining \macro\X, and then executing the array macro.
+    \item Macro arrays: these arrays are stored in a collection of macros: each element is stored in its own indexed macro.
+    So an array $[1;2;3]$ will be stored in three macros, whose values are $1$, $2$, $3$ respectively.
+\elist
+
+\bnote
+
+    All arrays are zero-indexed.
+
+\eppbox
+
+\subsubsection{Normal Arrays}
+
+\macroexp{\createarray {<name>}}
+creates an (normal) array whose name is {\it name}.
+\emacroexp
+
+\macroexp{\ensurearray {<name>}}
+ensures that an array by the name of {\it name} exists.
+\emacroexp
+
+\macroexp{\localizearray {<name>}}
+localizes (see \gotoanchor{localization}{localization}) the array named by {\it name}.
+\emacroexp
+
+\macroexp{\appendarray {<name>}{<value>}}
+appends {\it value} to the end of the array array named by {\it name}.
+{\it value} is inserted according to \gotomacro\currdef.
+\emacroexp
+
+\macroexp{\prependarray {<name>}{<value>}}
+prepends {\it value} to the end of the array array named by {\it name}.
+{\it value} is inserted according to \gotomacro\currdef.
+\emacroexp
+
+\macroexp{\appendarraymany {<name>}{{<value1>}{<value2>}...{<valueN>}}}
+appends {\it value1} through {\it valueN} to the end of the array array named by {\it name}.
+Each {\it value} is inserted according to \gotomacro\currdef.
+\emacroexp
+
+\macroexp{\arraylen {<name>}}
+expands to the length of the array specified by {\it name}.
+\emacroexp
+
+\macroexp{\getarraylen {<name>}<macro>}
+inserts the length of the array specified by {\it name} into the macro {\it macro}.
+\emacroexp
+
+\macroexp{\arraymap {<name>}<macro>}
+if the array specified by {\it name} is equivalent to $\tt [x0;\dots;xN]$ then doing \inlinecode|\arraymap{name}\X| will execute \inlinecode|\X{x1}{0}...\X{xN}{N}|.
+\emacroexp
+
+\macroexp{\indexarray {<name>}{<i>}<macro>}
+Puts the $i$th element in the array specified by {\it name} into the macro {\it macro}.
+\emacroexp
+
+\macroexp{\removearray {<name>}{<i>}<macro>}
+Removes the $i$th element in the array specified by {\it name} and places it into the macro {\it macro}.
+\emacroexp
+
+\macroexp{\removeitemarray {<name>}{<value>}}
+Removes all instances of {\it value} from the array specifed by {\it name} (comparison is done using \macro\ifx{} on macros containing {\it value} and the current index).
+\emacroexp
+
+\macroexp{\printarray {<name>}}
+Prints the array specified by {\it name}.
+\emacroexp
+
+\macroexp{\copyarray {<src>}{<dest>}}
+Copies the array {\it src} into {\it dest}.
+\emacroexp
+
+\macroexp{\concatenatearrays {<arr1>}{<arr2>}{<dest>}}
+Concatenates the arrays {\it arr1} and {\it arr2} and places the result into a new array {\it dest}.
+\emacroexp
+
+\macroexp{\initarray {<name>}{<x1>,...,<xN>}}
+Creates a new array by the name of {\it name} equivalent to $\tt[x1;\dots;xN]$.
+\emacroexp
+
+\macroexp{\findarray {<name>}{<value>}}
+Checks if the value {\it value} exists in the array {\it name} (checking is done via \macro\ifx).
+If the value exists, the value \macro\True{} is placed into \macro\@return@value, otherwise it is equal to \macro\False.
+\emacroexp
+
+\macroexp{\uniqueappendarray {<name>}{<value>}}
+Appends {\it value} to the array {\it name} only if it does not already exist in {\it name} (\macro\@return@value{} is set accordingly).
+\emacroexp
+
+\macroexp{\convertarray {<src>}{<dest>}}
+Converts a normal array {\it src} to a macro array {\it dest}.
+\emacroexp
+
+\macroexp{\mergesort {<src>}{<dest>}}
+Sorts the array {\it src} and places the result in {\it dest}.
+\emacroexp
+
+\subsubsection{Macro Arrays}
+
+\macroexp{\createmarray {<name>}}
+Creates a macro array by the name of {\it name}.
+\emacroexp
+
+\macroexp{\localizemarray {<name>}}
+Localizes (see \gotoanchor{localization}{localization}) the macro array specified by {\it name}.
+\emacroexp
+
+\macroexp{\appendmarray {<name>}{<value>}}
+Appends {\it value} to the macro array specified by {\it name}.
+\emacroexp
+
+\macroexp{\printmarray {<name>}}
+Prints the macro array specifed by {\it name}.
+\emacroexp
+
+\macroexp{\convertmarray {<src>}{<dest>}}
+Converts the macro array {\it src} into a normal array {\it dest}.
+\emacroexp
+
+\macroexp{\copymarray {<src>}{<dest>}}
+Copies the macro array {\it src} into {\it dest}.
+\emacroexp
+
+\macroexp{\initmarray {<name>}{<x1>,...,<xN>}}
+Creates a macro array {\it name} whose value is equivalent to $\tt[x1,\dots,xN]$.
+\emacroexp
+
+\macroexp{\findmarray {<name>}{<value>}<macro>}
+Searches for {\it value} in the macro array {\it name}.
+If found, sets \macro\@return@value{} to \macro\True{} and {\it macro} to the index where {\it value} was found.
+Otherwise \macro\@return@value{} is set to \macro\False.
+\emacroexp
+
+\subsection{Stacks}
+
+In the {\tt pdfData/stacks.tex} file, \pdftoolbox{} offers macros for creating and manipulating stack data-structures.
+\pdftoolbox{} offers two types of stacks, which differ in how they store their data.
+They are generally used for different purposes:
+
+\blist
+    \item Normal stacks: these are normal stacks which store just the values given.
+    \item Macro stacks: these stacks are meant to store only macros: they store both the definition and name of the macro.
+\elist
+
+\subsubsection{Normal Stacks}
+
+\macroexp{\createstack {<name>}}
+Creates a normal stack by the name of {\it name}.
+\emacroexp
+
+\macroexp{\stackpush {<name>}{<value>}}
+Pushes the value {\it value} onto the stack specified by {\it name}.
+\emacroexp
+
+\macroexp{\stackdecrement {<name>}}
+Pops from the top of the stack specified by {\it name} (deleting the value).
+\emacroexp
+
+\macroexp{\stackpop {<name>}<macro>}
+Pops from the top of the stack specified by {\it name} into {\it macro}.
+\emacroexp
+
+\macroexp{\stacktop {<name>}<macro>}
+Places the top of the stack specified by {\it name} into the macro {\it macro} without popping.
+\emacroexp
+
+\subsubsection{Macro Stacks} \anchor{macro stacks}
+
+Macro stacks store macros, as opposed to values.
+When pushing a macro \macro\X{} onto the stack, not only is the meaning of \macro\X{} stored, but so is its name.
+
+\macroexp{\createmacrostack {<name>}}
+Creates a macro stack by the name of {\it name}.
+\emacroexp
+
+\macroexp{\macrostackpush {<name>}<macro>}
+Pushes the macro {\it macro} onto the macro stack specified by {\it name}.
+\emacroexp
+
+\macroexp{\macrostackdecrement {<name>}}
+Pops from the top of the macro stack specified by {\it name} (deleting the value).
+\emacroexp
+
+\macroexp{\macrostackset {<name>}}
+If the top of the macro stack specified by {\it name} has name \macro\X{} and value {\tt value}, sets \macro\X{} to {\tt value}.
+\emacroexp
+
+\macroexp{\macrostackpop {<name>}}
+Pops from the top of the macro stack specified by {\it name} (same as \macro\macrostackset, but also pops the value off of the stack).
+\emacroexp
+
+\macroexp{\macrostacktop {<name>}<macro1><macro2>}
+If the top of the macro stack specified by {\it name} is $(\macro\X,{\tt value})$, then \macro\X{} is placed into {\it macro1}, and {\tt value} into {\it macro2}.
+\emacroexp
+
+\subsection{Localization} \anchor{localization}
+
+Using \gotoanchor{macro stacks}{macro stacks}, \pdftoolbox{} allows for {\it localization}.
+This gives the user the ability to create block scopes (as opposed to just plain-ol` \TeX{} groups).
+The usage is simple and as follows:
+\benum
+    \item The user enters a scope using \macro\beginscope.
+    \item The user {\it localizes} a macro \macro\X{} by doing \inlinecode|\localize\X|.
+    \item The user exits the scope using \macro\endscope.
+    Once the scope is exited, the previous definition of localized macros is restored.
+\eenum
+So for example,
+
+\beginhi \color{white}
+\def\X{0}
+\beginscope
+    \localize\X
+    \def\X{1}
+    \X
+    \beginscope
+        \def\X{2}
+        \X
+    \endscope
+    \X
+\endscope
+\X
+\endhi
+
+Will output 1 2 2 0.
+As opposed to
+
+\beginhi \color{white}
+\def\X{0}
+\bgroup
+    \def\X{1}
+    \X
+    \bgroup
+        \def\X{2}
+        \X
+    \egroup
+    \X
+\egroup
+\X
+\endhi
+
+Which will output 1 2 1 0.
+
+\subsection{Counters}
+
+In the {\tt pdfData/counters.tex}, \pdftoolbox{} implements counters.
+Counters are simple wrappers over plain-\TeX{} counters.
+They hold integer values, are mutable, and can be made dependent on one another so that when one is altered another is set to zero.
+
+\macroexp{\createcounter {<name>}[<c1>,...,<cN>]}
+Creates a counter by the name {\it name} dependent on counters {\it c1,\dots,cN}.
+\emacroexp
+
+\macroexp{\adddependentcounter {<secondary>}{<primary>}}
+Makes the {\it secondary} counter dependent on the {\it primary} one; whenever {\it primary} is (non-independently; see e.g. \gotomacro\seticounter) altered, {\it secondary} is set to zero.
+\emacroexp
+
+\macroexp{\zerodependents {<primary>}}
+Sets to zero all counters dependent on {\it primary}.
+\emacroexp
+
+\macroexp{\setcounter {<counter>}{<amount>}}
+Sets {\it counter} to {\it amount} (zeroing all counters dependent on {\it counter}).
+\emacroexp
+
+\macroexp{\advancecounter {<counter>}{<amount>}}
+Advances {\it counter} by {\it amount} (zeroing all counters dependent on {\it counter}).
+\emacroexp
+
+\macroexp{\seticounter {<counter>}{<amount>}}
+Sets {\it counter} to {\it amount} ({\it without} zeroing all counters dependent on {\it counter}).
+\emacroexp
+
+\macroexp{\advanceicounter {<counter>}{<amount>}}
+Advances {\it counter} by {\it amount} ({\it without} zeroing all counters dependent on {\it counter}).
+\emacroexp
+
+\macroexp{\counter {<name>}}
+Returns the \TeX{} counter corresponding to the \pdftoolbox{} counter {\it name}.
+Useful for example when printing the value of a counter: simply do \inlinecode|\the\counter{name}|.
+\emacroexp
+
+\subsection{Dictionaries}
+
+In the {\tt pdfData/dictionaries.tex} file, \pdftoolbox{} implements dictionaries (also colloquially known as ``hashmaps'' or ``maps'').
+These are simple maps between keys and values.
+
+\macroexp{\createdict {<name>}}
+Creates a dictionary by the name {\it name}.
+\emacroexp
+
+\macroexp{\adddict {<name>}{<key>}{<value>}}
+Adds the $({\it key}:{\it value})$ key-value pair to the dictionary specified by {\it name}.
+\emacroexp
+
+\macroexp{\indexdict {<name>}{<key>}}
+Expands to the value of {\it key} in the dictionary {\it name}.
+\emacroexp
+
+\macroexp{\keyindict {<name>}{<key>}}
+Sets \macro\@return@value{} according to if {\it key} is found in the dictionary {\it name}.
+\emacroexp
+
+\subsection{Key-Value Parameters}
+
+In {\tt pdfData/key-value.tex}, \pdftoolbox{} implements the ability to pass key-value parameters to macros.
+
+\macroexp{\mapkeys {<options>}{<input>}}
+Maps the key-value pairs given in {\it input} according to {\it options}.
+{\it options} is itself a set of key-value pairs, where the value of each key is an array which may contain:
+\blist
+    \item {\tt name} (required): the name of the macro to give the value of the key;
+    \item {\tt required}: added if the key is required;
+    \item {\tt definition}: what definition macro to use for defining the value (e.g. \macro\def, \macro\edef);
+    \item {\tt mapping}: how to map the input to the value: the input is defined relative to {\tt definition} into a macro wrapped with {\tt mapping};
+    \item {\tt default}: the default value of the key.
+\elist
+Or the value may be empty (no array), which means it is {\it valueless} and acts as a boolean flag.
+\emacroexp
+
+So for example, you may have a macro defined like so:
+
+\beginhi \color{white}
+\def\puthi#1{Hello (#1)}
+
+\def\getinput#1{%
+    \mapkeys{
+        first={
+            name=fst,
+            required,
+            definition=\edef,
+            mapping=\puthi%
+        },
+        second={
+            name=snd,
+            default=S. Lurp%
+        }%
+    }{#1}%
+}
+
+\getinput{first=pdftoolbox}
+(\fst) (\snd)
+\endhi
+
+This will output {\tt (Hello (pdftoolbox)) (S. Lurp)}.
+
+\macroexp{\keyexists {<key>}<macro>\lastkeys}
+This is an internal command, added to this documentation only due to its usefulness.
+Given a key name {\it key}, this macro checks if it exists in the map corresponding to the last call to \macro\mapkeys{} (the macro itself is more versatile, but we restrict it to this case).
+If the key does not exist, then {\it macro} is set to \macro\_nul.
+This is useful with valueless keys.
+\emacroexp
+
+\bwarning
+    \macro\mapkeys{} is a bit finnicky when it comes to spaces and commas, but the rule is simple: place a comment at the end of each list.
+    That means that within each key's array, you must place a comment at the end (otherwise an extraneous space is added to the value), and after the last key's array you must place a comment.
+\eppbox
+

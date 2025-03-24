@@ -1,0 +1,238 @@
+\input pdfToolbox-utils
+
+\_checkloaded{tableofcontents}
+
+\input pdfData
+\input pdfDstruct/fonts
+\input pdfDstruct/hooks
+\input pdfDstruct/hyperlinks
+
+\newwrite\_tocwrite
+\newread\_tocread
+
+\def\setuptoc{%
+    \immediate\openout\_tocwrite{\jobname .toc}%
+    \immediate\openin\_tocread{\jobname .data}%
+    \unless\ifeof\_tocread%
+        \input{\jobname .data}%
+    \fi%
+}
+
+\createbordertype{toc}{}{0}
+
+%   #1: Content title
+%   #2: Content value
+%   #3: Content depth
+%   #4: Anchor name
+\def\addtoccontent#1#2#3#4{%
+    \anchor[toc]{#4}%
+    \immediate\write\_tocwrite{\noexpand\tocline{#1}{#2}{#3}{#4}}%
+}
+
+\def\tocline#1#2#3#4{%
+    \csname tocline@depth@#3\endcsname{#1}{#2}{#4}%
+}
+
+\def\settoclinemanager#1{%
+    \_xp\currdef\csname tocline@depth@#1\endcsname##1##2##3%
+}
+
+\def\settoctitleformat#1#2{%
+    \_xp\currdef\csname toctitle@depth@#1\endcsname{#2}%
+}
+
+\def\settocvalueformat#1#2{%
+    \_xp\currdef\csname tocvalue@depth@#1\endcsname{#2}%
+}
+
+\def\settocleader#1#2{%
+    \_xp\currdef\csname tocleader@depth@#1\endcsname{#2}%
+}
+
+\def\settocindent#1#2{%
+    \_xp\curredef\csname tocindent@depth@#1\endcsname{#2}%
+}
+
+\def\settocbuf#1#2{
+    \_xp\curredef\csname tocbuf@depth@#1\endcsname{#2}%
+}
+
+\def\printtoc{%
+    \immediate\openin\_tocread{\jobname .toc}%
+    \unless\ifeof\_tocread%
+        \input{\jobname .toc}%
+    \fi%
+    \immediate\closein\_tocread%
+}
+
+\def\tableofcontents{\printtoc\setuptoc}
+
+\def\dotfill{\xleaders\hbox{$\m@th\mkern1.5mu\hbox{.}\mkern1.5mu$}\hfill}
+
+\def\_definetocmanager#1{%
+    \settoclinemanager{#1}{%
+        \kern\csname tocbuf@depth@#1\endcsname\relax%
+        \hbox to\hsize{%
+            \hskip\csname tocindent@depth@#1\endcsname\relax%
+            \gotoanchor[toc]{##3}{\csname toctitle@depth@#1\endcsname{##1}}%
+            \hfil\ {\csname tocleader@depth@#1\endcsname}\ %
+            \gotoanchor[toc]{##3}{\csname tocvalue@depth@#1\endcsname{##2}}%
+        }%
+        \kern\csname tocbuf@depth@#1\endcsname\relax%
+    }%
+}
+ 
+
+\def\settocdepthformat#1#2{%
+    \mapkeys{%
+        title={%
+            name=toctitle@depth@#1,
+            default=\setfont{rm}%
+        },
+        value={%
+            name=tocvalue@depth@#1,
+            default=\setfont{rm}%
+        },
+        leader={%
+            name=tocleader@depth@#1,
+            default%
+        },
+        indent={%
+            name=tocindent@depth@#1,
+            default=0pt%
+        },
+        buffer={%
+            name=tocbuf@depth@#1,
+            default=0pt%
+        }%
+    }{#2}%
+    \_definetocmanager{#1}%
+}
+
+{\setbox0=\hbox{ }\xdef\_spacewd{\the\wd0}}
+\settocdepthformat1{title=\setfont{bf}, value=\setfont{bf}, leader=, indent=0pt, buffer=3pt}
+\settocdepthformat2{leader=\dotfill, indent=.75cm, buffer=0pt}
+\settocdepthformat3{leader=\dotfill, indent=\dimexpr .75cm+\_spacewd+\subsectionnumwidth\relax, buffer=0pt}
+
+\createcounter{section}
+\createcounter{subsection}[section]
+\createcounter{subsubsection}[subsection]
+
+\def\setmacrotolen#1#2{{%
+    \ifx\undefined#1%
+        \setbox0=\hbox{#2}%
+        \xdef#1{\the\wd0}%
+    \fi%
+}}
+
+\setmacrotolen\sectionnumwidth{99}%
+\setmacrotolen\subsectionnumwidth{9.9}%
+\setmacrotolen\maxpagelen{9}%
+
+\def\settomax#1#2{{%
+    \setbox0=\hbox{#2}%
+    \ifdim\wd0>#1 %
+        \xdef#1{\the\wd0}%
+    \fi%
+}}
+
+\def\updatemaxpagelen#1{%
+    \settomax\maxpagelen{#1}%
+}
+
+%\def\updatesectionnumwidth#1{%
+%    \settomax\sectionnumwidth{#1}%
+%}
+
+\def\updatesubsectionnumwidth#1{%
+    \settomax\subsectionnumwidth{#1}%
+}
+
+%\appendtohook{end}{%
+%    \immediate\closeout\_tocwrite%
+%    \immediate\closein\_tocread%
+%    \immediate\openout\_tocwrite{\jobname .data}%
+%    \immediate\write\_tocwrite{\gdef\noexpand\maxpagelen{\maxpagelen}}%
+%    \immediate\write\_tocwrite{\gdef\noexpand\maxpagelen{\maxpagelen}}%
+%    \immediate\closeout\_tocwrite%
+%}
+
+\docdata{\maxpagelen}
+%\docdata{\sectionnumwidth}
+\docdata{\subsectionnumwidth}
+
+\def\sectioncontent#1{%
+    \quitvmode{\rlap{\the\counter{section}\hss}\kern\csname tocindent@depth@2\endcsname #1}%
+}
+
+\def\subsectioncontent#1{%
+    {\hbox to\subsectionnumwidth{\the\counter{section}.\the\counter{subsection}\hss} #1}%
+}
+
+\def\addthreedepth#1#2{%
+    \addtoccontent{#1}{\pagenobox}{3}{#2}%
+    \updatemaxpagelen{\the\pageno}%
+}
+
+\def\pagenobox{%
+    \hbox to\maxpagelen{\hss\the\pageno}%
+}
+
+\def\_section#1{%
+    \advancecounter{section}{1}%
+    \par\bigskip%
+    \noindent{\setfontandscale{bf}{15pt}\the\counter{section} #1}%
+    \addtoccontent{\sectioncontent{#1}}{\pagenobox}{1}{section@\the\counter{section}}%
+    \updatemaxpagelen{\the\pageno}%
+    \gdef\currsection{#1}%
+    \gdef\currsubsection{#1}%
+    \par\penalty\@M\bigskip%
+}
+
+\def\_pseudosection#1{%
+    \par\bigskip%
+    \noindent{\setfontandscale{bf}{15pt}#1}%
+    \par\penalty\@M\bigskip%
+}
+
+\def\section{\@ifstar \_pseudosection\_section}
+
+\def\currsubsubsection{}
+\def\currsubsection{}
+\def\currsection{}
+
+\def\_subsection#1{%
+    \advancecounter{subsection}{1}%
+    \par\medskip%
+    \noindent{\setfontandscale{bf}{12pt}\the\counter{section}.\the\counter{subsection} #1}%
+    \addtoccontent{\subsectioncontent{#1}}{\pagenobox}{2}{subsection@\the\counter{section}.\the\counter{subsection}}%
+    \updatesubsectionnumwidth{\the\counter{section}.\the\counter{subsection}}%
+    \updatemaxpagelen{\the\pageno}%
+    \gdef\currsubsection{#1}%
+    \par\penalty\@M\medskip%
+}
+
+\def\_pseudosubsection#1{%
+    \par\medskip%
+    \noindent{\setfontandscale{bf}{12pt}#1}%
+    \par\penalty\@M\medskip%
+}
+
+\def\subsection{\@ifstar \_pseudosubsection\_subsection}
+
+\def\_subsubsection#1{%
+    \advancecounter{subsubsection}{1}%
+    \par\medskip%
+    \noindent{\setfontandscale{bf}{12pt}\the\counter{section}.\the\counter{subsection}.\the\counter{subsubsection} #1}%
+    \gdef\currsubsubsection{#1}%
+    \par\penalty\@M\medskip%
+}
+
+\def\_pseudosubsubsection#1{%
+    \par\medskip%
+    \noindent{\setfontandscale{bf}{12pt}#1}%
+    \par\penalty\@M\medskip%
+}
+
+\def\subsubsection{\@ifstar \_pseudosubsubsection\_subsubsection}
+

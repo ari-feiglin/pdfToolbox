@@ -1,0 +1,66 @@
+\input pdfToolbox
+\input preamble
+
+\setlayout{horizontal margin=2cm, vertical margin=2cm}
+\parindent=0pt
+\parskip=3pt plus 2pt minus 2pt
+
+\footline={}
+
+\pageborder{rgb{.5 .5 1}}{rgb{0 0 .4}}{5}
+
+\color rgb{.1 0 .8}
+
+\hbox to \dimexpr\hsize-\_actual_curve_buf\relax{\hfill Version \version}
+\kern-5pt
+{\def\boxshadowcolor{rgb{.3 .3 .8}}
+\bppbox{rgb{.6 .6 1}}{rgb{0 0 .4}}{rgb{.1 0 .4}}
+
+    \centerline{\pdftoolbox[35pt]}
+    \smallskip
+    \centerline{slurper04@gmail.com}
+
+\eppbox
+
+\bigskip
+
+\bppbox{rgb{.6 .6 1}}{rgb{0 0 .4}}{rgb{.1 0 .4}}
+
+    \input introduction
+
+\eppbox
+
+\bppbox{rgb{.6 .6 1}}{rgb{0 0 .4}}{rgb{.1 0 .4}}
+    \section*{Contents}
+    
+    \tableofcontents
+\eppbox
+
+}
+
+\vfill\break
+
+\color{black}
+
+\pageno=1
+\newif\ifpageodd
+\pageoddtrue
+\headline={%
+    \hbox to \hsize{\color{black}%
+        \ifpageodd\hfil{\it\currsection\quad\bf\folio}\global\pageoddfalse%
+        \else{\bf\folio\quad\it\currsection}\hfil\global\pageoddtrue\fi%
+    }%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{pdfData}
+
+\input pdfdata-docs
+
+\section{pdfDstruct}
+
+\input pdfdstruct-docs
+
+\bye
+
