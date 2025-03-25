@@ -1,0 +1,80 @@
+The pdfGraphics section of the \pdftoolbox{} toolbox is for pdf-specific graphics macros.
+You can use it to create colorful documents with illustrations, etc.
+
+\subsection{Colors}
+
+In {\tt pdfGraphics/colors.tex}, \pdftoolbox{} provides macros for coloring text and areas of your document.
+
+\macroexp{\color <color space>{<code>}/cr\color {<name>}}
+Switches the color of the document.
+In its first form, {\it color space} corresponds to either {\tt rgb} or {\tt cmyk}, and {\it code} is either an rgb or cmyk code.
+In its second form, if {\it name} is a predefined color name (see \gotomacro\definecolor), the color is switched to it.
+\emacroexp
+
+\macroexp{\localcolor <color space>{<code>}{<text>}/cr\localcolor {<name>}{<text>}}
+Switches the color of {\it text}, according to the options provided (see \gotomacro\color).
+\emacroexp
+
+\macroexp{\definecolor {<name>}{<color space>}{<code>}}
+Defines a color of name {\it name} whose space is {\it color space} (either {\tt rgb} or {\tt cmyk}) of code {\it code} (either an rgb or cmyk code).
+\emacroexp
+
+\macroexp{\letcolor {<new name>}{<name>}}
+Defines a color of name {\it new name} to be equal to the existing color of name {\it name}.
+\emacroexp
+
+\macroexp{\definecolormacro {<name>}{<color space>}{<code>}}
+Calls \gotomacro\definecolor, and also defines a macro of name {\it name} which is equivalent to \inlinecode|\localcolor <color space>{<code>}{#1}|.
+
+The following colors are defined:
+
+\centerline{\red{red} \blue{blue} \green{green} \yellow{yellow} \orange{orange} \purple{purple} \highlightbox{black}{\white{white}} \black{black} \darkgreen{darkgreen} \grey{grey}}
+\emacroexp
+
+\macroexp{\highlightbox <color space>{<code>}{<material>}
+\highlightbox {<name>}{<material>}}
+Colors the background of the material {\it material} according to the color provided.
+For example \inlinecode|\highlightbox {red}{pdfToolbox}| will yield \highlightbox{red}{pdfToolbox}.
+\emacroexp
+
+\macroexp{\coloredbox <color space>{<code>}{<material>}
+\coloredbox {<name>}{<material>}}
+Like \gotomacro\highlightbox{} but adds a buffer of space around {\it material} in accordance with \macro\bufferwidth\anchormacro\bufferwidth{} and \macro\bufferheight\anchormacro\bufferheight.
+For example \inlinecode|\coloredbox {red}{pdfToolbox}| will yield \coloredbox{red}{pdfToolbox}.
+\emacroexp
+
+\macroexp{\framecoloredbox <color space>{<code>}{<material>}
+\framecoloredbox {<name>}{<material>}}
+Like \gotomacro\coloredbox{} but adds a frame around {\it material} of width \macro\framewidth.
+For example \inlinecode|\framecoloredbox {red}{pdfToolbox}| will yield \framecoloredbox{red}{pdfToolbox}.
+\emacroexp
+
+\macroexp{\framebox {<material>}}
+Adds a frame around {\it material} with a buffer of \macro\bufferwidth{} and \macro\bufferheight{} of width \macro\framewidth.
+\emacroexp
+
+\macroexp{\curvedcolorbox {<stroke color>}{<bg color>}{<material>}{<curve control>}}
+Creates a curved color framed box around {\it material} with frame color {\it stroke color} and background color {\it bg color} (which may be names or of the form \inlinecode|<color space>{<code>}|.
+The curve's stroke width is determined by \macro\curvewidth, and the buffer around the material is determined by \macro\curvebuffer.
+{\it control} is a sequence of $4$ symbols (either {\tt .} or {\tt X}) which determine whether a corner is curved or not.
+A {\tt .} corresponds to a curve and a {\tt X} corresponds to a right corner.
+A shadow of color \macro\boxshadowcolor{} is added to to the box, at an x and y offset of \macro\shadowxoff{} and \macro\shadowyoff{} respectively.
+
+So for example:
+
+\displaycode{%
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{....}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{X...}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{.X..}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{..X.}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{...X}&}
+\emacroexp
+
+\macroexp{\fakebold {<material>}}
+Bolds the material {\it material} (essentially just thickening the stroke width according to \macro\fakeboldwidth).
+\emacroexp
+
+\macroexp{\flip {<material>}}
+\quitvmode\flip{flips} {\it material} about its vertical axis.
+\emacroexp
+

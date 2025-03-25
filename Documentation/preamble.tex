@@ -37,8 +37,7 @@
     \egroup%
 }
 
-\def\inlinecode#1{
-    \bgroup%
+\def\setupverb{%
     \catcode`\ =\active%
     \catcode`\{=12%
     \catcode`\}=12%
@@ -48,6 +47,11 @@
     \catcode`\#=12%
     \catcode`\%=12%
     \catcode`\_=12%
+}
+
+\def\inlinecode#1{
+    \bgroup%
+    \setupverb%
     \catcode`#1=2%
     \tt%
 }
@@ -56,7 +60,7 @@
 
 {\catcode`\<=\active
 \catcode`\^^M=\active%
-\gdef\macrousage{%
+\gdef\_macrousage#1{%
     \bgroup%
     \catcode`\ =\active%
     \catcode`\/=0%
@@ -68,10 +72,17 @@
     \catcode`\^^M=\active%
     \def<##1>{$\langle${\it ##1}$\rangle$}%
     \def^^M{\crcr}%
-   \setbox0=\vbox\bgroup\halign\bgroup\hfil\tt##\crcr%
+    \ifx.#1.%
+        \_afterfi{\setbox0=\vbox\bgroup\halign\bgroup\tt\hfil##\crcr}%
+    \else%
+        \_afterfi{\setbox0=\vbox\bgroup\halign\bgroup\tt##\hfil\crcr}%
+    \fi%
 }}
+\def\macrousage{\_macrousage{}}
 \def\emacrousage{\crcr\egroup\egroup\par\smallskip\centerline{\box0}\egroup\par\smallskip}
 \def\emacrousageB{\crcr\egroup\egroup\box0\egroup}
+
+\def\getmacrousageB#1{{\_macrousage*\scantokens{#1}\emacrousageB}}
 
 \def\macroname#1{{\tt\string#1}}
 
@@ -81,7 +92,10 @@
 \def\_anchormacro#1#2\_nul{\anchor{\string#1}}
 \def\anchormacro#1{\anchor{\string#1}}
 
-\def\macroexp#1{\par\smallskip\bgroup\leftskip=1cm\leavevmode\_anchormacro#1\_nul\kern-1cm\macrousage \scantokens{#1}\emacrousageB:}
+\def\macroexp#1{\par\smallskip\bgroup\leftskip=1cm\leavevmode\_anchormacro#1\_nul\kern-1cm\getmacrousageB{#1}:}
 \def\emacroexp{\par\egroup\smallskip}
 
 \def\gotomacro#1{\gotoanchor{\string#1}{{\tt\string#1}}}
+
+
+\def\displaycode#1{\centerline{\vbox{\def\cr{\crcr\relax}\halign{\hfil\gdef\@@{##}{\setupverb\tt\scantokens\_xp\_xp\_xp{\_xp\_gobble\@@}}: &\_gobble{##}\@@\hfil\crcr\relax#1\crcr}}}}

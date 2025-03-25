@@ -88,13 +88,13 @@
 \def\_highlightbox#1#2{\bgroup\def\_regA{#1{#2}}\setbox\_colorbox=\hbox\bgroup\aftergroup\_endhighlightbox\let\_regU}
 \def\highlightbox#1#{\_highlightbox{#1}}
 
-\def\_buffer_width{2pt}
-\def\_buffer_height{2pt}
-\def\_bufferboxend{\hbox{\kern\_buffer_width\lower\dimexpr\_buffer_height + \dp\_colorbox\relax\vbox{\kern\_buffer_height\box\_colorbox\kern\_buffer_height}\kern\_buffer_width}}
+\def\bufferwidth{2pt}
+\def\bufferheight{2pt}
+\def\_bufferboxend{\hbox{\kern\bufferwidth\lower\dimexpr\bufferheight + \dp\_colorbox\relax\vbox{\kern\bufferheight\box\_colorbox\kern\bufferheight}\kern\bufferwidth}}
 \def\_bufferbox{\setbox\_colorbox=\hbox\bgroup\aftergroup\_bufferboxend\let\_regU}
 
-\def\_frame_width{.3pt}
-\def\_frameboxend{\hbox{\vrule width\_frame_width\lower\dimexpr \_frame_width + \dp\_colorbox\relax\vbox{\hrule height\_frame_width\box\_colorbox\hrule height\_frame_width}\vrule width\_frame_width\relax}}
+\def\framewidth{.3pt}
+\def\_frameboxend{\hbox{\vrule width\framewidth\lower\dimexpr \framewidth + \dp\_colorbox\relax\vbox{\hrule height\framewidth\box\_colorbox\hrule height\framewidth}\vrule width\framewidth\relax}}
 \def\_framebox{\setbox\_colorbox=\hbox\bgroup\aftergroup\_frameboxend\let\_regU}
 
 \def\_coloredbox#1#2{\highlightbox#1{#2}\bgroup\_bufferbox\bgroup\aftergroup\egroup\let\_regU}
@@ -157,8 +157,8 @@
 \def\curvewidth{1pt}
 \def\_actual_curve_buf{\dimexpr\curvebuffer + \curvewidth\relax}
 \def\boxshadowcolor{rgb{.9 .9 .9}}
-\def\_box_x_offset{3pt}
-\def\_box_y_offset{-3pt}
+\def\shadowxoff{3pt}
+\def\shadowyoff{-3pt}
 
 \long\def\curvedcolorbox#1#2#3#4{{%
     \setbox\_colorbox=\hbox{{#3}}%
@@ -172,7 +172,7 @@
                     q \_pdf_pt_scale,
                     \_getcolor{}{\boxshadowcolor}
                     \_nopt{\curvewidth} w
-                    \_curvedbox{\_nopt{\_box_x_offset}}{\_nopt{-\dp\_colorbox+\_box_y_offset}}{\_nopt{\wd\_colorbox}}{\_nopt{\ht\_colorbox+\dp\_colorbox}}{\_nopt{\curvebuffer}}#4
+                    \_curvedbox{\_nopt{\shadowxoff}}{\_nopt{-\dp\_colorbox+\shadowyoff}}{\_nopt{\wd\_colorbox}}{\_nopt{\ht\_colorbox+\dp\_colorbox}}{\_nopt{\curvebuffer}}#4
                     b
                     \_getcolor{bg}{#2}
                     \_getcolor{fg}{#1}
@@ -212,8 +212,9 @@
     }%
 }
 
+\def\fakeboldwidth{.4}
 \long\def\_fakebold[#1]#2{\pdfliteral{2 Tr #1 w}#2\pdfliteral{0 Tr}}
-\def\fakebold{\_ifnextchar[ {\_fakebold}{\_fakebold[.4]}}
+\def\fakebold{\_ifnextchar[ {\_fakebold}{\_fakebold[\fakeboldwidth]}}
 \def\flip#1{{\setbox0=\hbox{#1}\kern\wd0\pdfsave\pdfliteral{-1 0 0 1 0 0 cm}\rlap{#1}\pdfrestore}}
 
 \definecolormacro{red}{rgb}{1 0 0}
