@@ -105,8 +105,9 @@
 \localsetters
 
 \bgroup\lccode`\!=`\p \lccode`\?=`\t
-\lowercase{\egroup\def\_rmpt#1!?{#1}}
+\lowercase{\egroup\def\_rmpt#1!?{#1}\def\_floorrm#1.#2!?{#1}}
 \def\_nopt#1{\_xp\_rmpt\the\dimexpr #1\relax}
+\def\_noptfloor#1{\_xp\_floorrm\the\dimexpr #1\relax}
 
 \long\def\_repeat#1#2{%
     \ifnum#1>0 %

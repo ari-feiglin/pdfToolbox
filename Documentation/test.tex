@@ -1,23 +1,10 @@
-\input pdftoolbox
+\input pdfToolbox
 
-\def\puthi#1{Hello (#1)}
-
-\def\getinput#1{%
-    \mapkeys{
-        first={
-            name=fst,
-            required,
-            definition=\edef,
-            mapping=\puthi
-        },
-        second={
-            name=snd,
-            default=S. Lurp%
-        }%
-    }{#1}%
+\drawdiagram{
+A&B&C
+}{
+\diagarrow{from={1,1}, to={1,2}, origin orient={left,bottom}}
 }
 
-\getinput{first=pdftoolbox}
-\say{(\fst) (\snd)}
-
 \bye
+

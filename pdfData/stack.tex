@@ -51,7 +51,7 @@
 %   #1: The name of the stack.
 %   #2: A control sequence to put the definition of the control sequence at the top of the stack into.
 %   #3: A control sequence to put the name of the control sequence at the top of the stack into.
-\def\macrostacktop#1#2#3{%
+\def\macrostackpeek#1#2#3{%
     \_xp\let#2\csname mstack@#1@def@\csname mstack@#1@sp\endcsname\endcsname%
     \_xp\let#3\csname mstack@#1@name@\csname mstack@#1@sp\endcsname\endcsname%
 }

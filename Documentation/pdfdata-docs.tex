@@ -197,7 +197,7 @@ If the top of the macro stack specified by {\it name} has name \macro\X{} and va
 Pops from the top of the macro stack specified by {\it name} (same as \macro\macrostackset, but also pops the value off of the stack).
 \emacroexp
 
-\macroexp{\macrostacktop {<name>}<macro1><macro2>}
+\macroexp{\macrostackpeek {<name>}<macro1><macro2>}
 If the top of the macro stack specified by {\it name} is $(\macro\X,{\tt value})$, then \macro\X{} is placed into {\it macro1}, and {\tt value} into {\it macro2}.
 \emacroexp
 

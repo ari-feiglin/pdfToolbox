@@ -78,3 +78,137 @@ Bolds the material {\it material} (essentially just thickening the stroke width 
 \quitvmode\flip{flips} {\it material} about its vertical axis.
 \emacroexp
 
+\subsection{Pretty Textboxes}
+
+In {\tt pdfGraphics/colorboxes.tex}, \pdftoolbox{} provides macros for pretty printing textboxes.
+These are simply colored textboxes which can split across pages.
+There are two kinds of pretty textboxes: {\tt ppbox}es and {\tt linedppbox}es.
+
+\macroexp{\bppbox {<bg color>}{<stroke color>}{<fg color>}[<curve control>] ... \eppbox}
+This creates a {\tt ppbox}, which is just a wrapper around \gotomacro\curvedcolorbox.
+\emacroexp
+
+\macroexp{\blinedppbox {<bg color>}{<stroke color>}{<fg color>} ... \elinedppbox}
+This creates a colored textbox with a rule down the left side.
+For example:
+
+\blinedppbox{red}{black}{white}
+This is a {\tt linedppbox} with a red background, black stroke, and white text.
+\elinedppbox
+
+The width of the rule is determined by \macro\pprulewd, the vertical buffer within the box (around the text) is determined by \macro\pprulevbuf, and the horizontal buffer on the left is \macro\pprulehbuf.
+\emacroexp
+
+\subsection{Illustrating}
+
+In {\tt pdfGraphics/pdfdraw.tex}, \pdftoolbox{} provides macros for creating illustrations.
+
+\bwarning
+This feature scares me.
+Its implementation is a mess and I am scared to change it; but I will need to at some point.
+\eppbox
+
+\macroexp{\bdrawing...\edrawing}
+Begin a drawing environment.
+The drawing environment is a plane as large as the drawings within it.
+$(0,0)$ corresponds to the bottom left corner.
+\emacroexp
+
+\macroexp{\addnode {<text>}{<x>}{<y>}{<name>}}
+Creates a node by the name of {\it name} with text {\it text} at coordinate $(x,y)$.
+You can access the following values (called node-relative coordinates): {\tt<name>.left}, {\tt<name>.top}, {\tt<name>.right}, {\tt<name>.bottom}, {\tt<name>.xcenter}, {\tt<name>.ycenter}.
+\emacroexp
+
+\macroexp{\drawpath {<start x>}{<start y>}{<end x>}{<end y>}{<x off>}{<y off>}{<start cap>}{<end cap>}{<color>}}
+Draws a line from $(\hbox{\it start x},\hbox{\it start y})$ to $(\hbox{\it end x},\hbox{\it end y})$.
+This is offset by {\it off x} on the $x$-axis and {\it off y} on the $y$-axis (these are dimensions).
+{\it start cap} is the linecap used at the starting point, and {\it end cap} is the linecap used at the end point (see \gotomacro\definelinecap).
+The line is drawn in the color {\it color}.
+
+The coordinates may be numeric values or node-relative coordinates (see \gotomacro\addnode).
+\emacroexp
+
+\macroexp{\drawbezier {<start x>}{<start y>}{<end x>}{<end y>}{<off>}{<curvature>}{<start cap>}{<end cap>}{<color>}}
+Draws a curve from $(\hbox{\it start x},\hbox{\it start y})$ to $(\hbox{\it end x},\hbox{\it end y})$ with curvature {\it curvature}.
+This is offset by {\it off}, which must be a pair of the form \inlinecode|{<x off>}{<y off>}| corresponding to the $x$-axis offset and $y$-axis offset respectively (dimensions).
+{\it start cap} is the linecap used at the starting point, and {\it end cap} is the linecap used at the end point (see \gotomacro\definelinecap).
+The line is drawn in the color {\it color}.
+
+The coordinates may be numeric values or node-relative coordinates (see \gotomacro\addnode).
+\emacroexp
+
+\macroexp{\definelinecap {<name>}{<code>}{<width>}}
+Defines a linecap by the name of {\it name}.
+{\it code} is the code which draws the linecap (see \gotoanchor{internal-pdfdraw}{Internals of pdfDraw}), and {\it width} is the width of the linecap.
+
+The provided linecaps are:
+
+\def\drawlinecap#1{$\vcenter{\hbox to\csname linecap@#1@wd\endcsname pt{\pdfliteral{q \_pdfdraw_nattrans, 1 j 1 J \_pdfdraw_strokewidth\_space w \csname linecap@#1\endcsname\_space Q}\hfil}}$}
+\centerline{\vbox{\tabskip=.5cm\halign{&\hfil\gdef\@@{#}{\tt\@@}: \tabskip=\z@&\_gobble{#}\drawlinecap\@@\tabskip=.5cm\cr
+>&&<&&|-&&-|&&>>&&<<&&o&\cr
+}}}
+
+There is also an empty linecap {\tt-}.
+\emacroexp
+
+Outside of drawing environments, \pdftoolbox{} provides a macro to make diagrams, \macro\drawdiagram.
+Its usage is \macroexp{\drawdiagram {<table>}{<arrows>}}.
+{\it table} is a normal \TeX{} alignment table (similar format as \macro\halign{}, without the preamble).
+{\it arrows} is a collection of \gotomacro\diagarrow{} macro calls.
+
+\macroexp{\diagarrow {<options>}}
+Draws an arrow in a \macro\drawdiagram{} diagram.
+{\it options} contains the following keys:
+\blist
+    \item {\tt from} (required): the cell from which to start the arrow.
+        Cells start indexing at \inlinecode|{1,1}| for the top left cell where the first number is the row and the second the column;
+    \item {\tt to} (required): the cell to end the arrow;
+    \item {\tt left cap} (default {\tt-}): the start linecap;
+    \item {\tt right cap} (default {\tt>}): the end linecap;
+    \item {\tt color} (default {\tt black}): the color to draw the arrow in;
+    \item {\tt x off} (default {\tt0pt}): the $x$-axis offset;
+    \item {\tt y off} (default {\tt0pt}): the $y$-axis offset;
+    \item {\tt text}: the text to add on the arrow;
+    \item {\tt x distance} (default {\tt0pt}): the amount to move the text on the $x$-axis;
+    \item {\tt y distance} (default {\tt0pt}): the amount to move the text on the $y$-axis;
+    \item {\tt slide} (default {\tt.5}): where to place the text relative to the arrow;
+    \item {\tt curve}: the amount to curve the arrow;
+    \item {\tt dashed} (valueless): add to make the arrow line dashed;
+    \item {\tt dotted} (valueless): add to make the arrow line dotted;
+    \item {\tt origin orient}: the placement of the start of the arrow relative to the origin (a pair like \inlinecode|{left,bottom}|);
+    \item {\tt dest orient}: the placement of the end of the arrow relative to the destination (a pair like \inlinecode|{left,bottom}|).
+\elist
+\emacroexp
+
+So for example, 
+
+\bgroup\parindent=\z@
+\beginhi \color{white}
+\drawdiagram{
+    A&B\cr
+    C&D
+}{
+    \diagarrow{from={1,1}, to={1,2}, left cap=<<}
+    \diagarrow{from={1,2}, to={2,2}, color=rgb{1 0 0}, text={hello}, x distance=.5cm}
+    \diagarrow{from={2,2}, to={2,1}, curve=10pt, origin orient={xcenter,bottom}, dest orient={xcenter,bottom}}
+    \diagarrow{from={2,1}, to={1,1}, dashed, left cap=o, right cap=o}
+}
+\endhi
+\egroup
+
+Will yield
+
+\centerline{\drawdiagram{
+    A&B\cr
+    C&D
+}{
+    \diagarrow{from={1,1}, to={1,2}, left cap=<<}
+    \diagarrow{from={1,2}, to={2,2}, color=rgb{1 0 0}, text={hello}, x distance=.5cm}
+    \diagarrow{from={2,2}, to={2,1}, curve=10pt, origin orient={xcenter,bottom}, dest orient={xcenter,bottom}}
+    \diagarrow{from={2,1}, to={1,1}, dashed, left cap=o, right cap=o}
+}}
+
+Between each row of the diagram, space of width \macro\diagrowbuf{} is added.
+Between each column, \macro\diagcolbuf.
+The height of each row is at least \macro\diagrowheight{} and the width of each column is at least \macro\diagcolwidth.
+
