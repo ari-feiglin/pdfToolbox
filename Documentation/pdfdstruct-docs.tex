@@ -212,8 +212,9 @@ To add text in between items (not as part of the list), you can use \macro\mtext
 
 In {\tt pdfDstruct/tableofcontents.tex}, \pdftoolbox{} provides macros for creating and displaying tables of content.
 
-\macroexp{\addtoccontent {<title>}{<value>}{<depth>}{<anchor>}}
-Adds content to the table of contents whose title is {\it title} (e.g. chapter name), value is {\it value} (e.g. page number), depth is {\it depth}, and is linked to the anchor {\it anchor}.
+\macroexp{\addtoccontent {<marker>}{<title>}{<value>}{<depth>}{<anchor>}}
+Adds content to the table of contents whose marker is {\it marker} (e.g. $1.1$; this is printed to the left of the title), title is {\it title} (e.g. chapter name), value is {\it value} (e.g. page number), depth is {\it depth},
+and is linked to the anchor {\it anchor}.
 The depth {\it depth} determines the style used in the table (see \gotomacro\settocdepthformat).
 \emacroexp
 
@@ -225,15 +226,17 @@ Prints the table of contents.
 Sets the format of the table of contents at the depth {\it depth}.
 {\it options} is a map with the following fields:
 \blist
-    \item {\tt title}: the style switch for the title (default is \inlinecode|\setfont{rm}|);
-    \item {\tt value}: the style switch for the value (default is \inlinecode|\setfont{rm}|);
+    \item {\tt marker}: the style for the marker (default is \inlinecode|\setfont{rm}|; the marker is passed as a parameter to {\tt marker});
+    \item {\tt marker buffer}: the buffer between the title and marker (default is {\tt.25cm});
+    \item {\tt title}: the style for the title (default is \inlinecode|\setfont{rm}|; the title is passed as a parameter to {\tt title});
+    \item {\tt value}: the style for the value (default is \inlinecode|\setfont{rm}|; the value is passed as a parameter to {\tt value});
     \item {\tt leader}: the leader to add between the title and value (default is nothing);
     \item {\tt indent}: the amount to indent the line (default is 0pt);
     \item {\tt buffer}: the amount of buffer to add around the line (default is 0pt).
 \elist
 \emacroexp
 
-\pdftoolbox{} provides three types of sectioning: sections, subsections, and subsubsections.
+\pdftoolbox{} provides four types of sectioning: parts, sections, subsections, and subsubsections.
 Each has a counter in its name (e.g. {\tt section}), and a macro with the current section name (e.g. \macro\currsection).
 
 \macroexp{\section (*){<title>}}

@@ -92,7 +92,7 @@
 \def\_anchormacro#1#2\_nul{\anchor{\string#1}}
 \def\anchormacro#1{\anchor{\string#1}}
 
-\def\macroexp#1{\par\smallskip\bgroup\leftskip=1cm\leavevmode\_anchormacro#1\_nul\kern-1cm\getmacrousageB{#1}:}
+\def\macroexp#1{\par\smallskip\bgroup\ifcsname inmacroexp\endcsname\errmessage{Already in macroexp}\fi\def\inmacroexp{}\leftskip=1cm\leavevmode\_anchormacro#1\_nul\kern-1cm\getmacrousageB{#1}:}
 \def\emacroexp{\par\egroup\smallskip}
 
 \def\gotomacro#1{\gotoanchor{\string#1}{{\tt\string#1}}}

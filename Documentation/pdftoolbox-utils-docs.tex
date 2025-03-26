@@ -1,0 +1,91 @@
+In {\tt pdfToolbox-utils.tex}, \pdftoolbox{} provides various useful utilities for a variety of (relatively) simple tasks.
+
+\subsection{Simple Macros}
+
+\macroexp{\_checkloaded {<name>}}
+Place this at the beginning of a package or a file in a package to ensure you don't include the same file multiple times.
+It will check if {\it name} has already been loaded: if it has been, it stops input; otherwise it remembers that {\it name} has been loaded and continues inputting it.
+\emacroexp
+
+A few useful short macros:
+\blist
+    \item \macro\_xp: shorthand for \macro\expandafter;
+    \item \macro\_nul: defined to be \macro\_nul; useful as a marker (used, for example, to mark the end of something);
+    \item \macro\_id: defined as \inlinecode|\def\_id#1{#1}|;
+    \item \macro\_gobble: gobbles the next parameter;
+    \item \macro\_gobbletilnul: gobbles until it sees \macro\_nul{} (definition is \inlinecode|\def\_gobbletilnul#1\_nul{}|);
+    \item \macro\_mstrip: given a control sequence, returns its name without the escape character;
+    \item \macro\True: defined to be \macro\True; used when returning a value;
+    \item \macro\False: defined to be \macro\False; used when returning a value;
+    \item \macro\glet: \inlinecode|\global\let|;
+    \item \macro\_xplet: takes two inputs {\tt A} and {\tt B}, suppose they expand to {\tt X} and {\tt Y} respectively.
+    Then \inlinecode|\_xplet{A}{B}| is equivalent to \inlinecode|\let XY|;
+    \item \macro\_afterfi: within an \inlinecode|\if...\fi| construct, placing code inside \macro\_afterfi{} will execute it (if the condition matches) after the \macro\fi;
+    \item \macro\say{}: prints the input on the terminal (on its own line).
+\elist
+
+\macroexp{\_ifnextchar <char>{<first>}{<second>}
+\@ifnextchar <char>{<first>}{<second>}}
+Inspired by \LaTeX.
+Looks at the following character, if it is equal to {\it char}, executes {\it first} and otherwise executes {\it second}.
+The following character is left in the input stream.
+\emacroexp
+
+\macroexp{\_ifstar {<first>}{<second>}
+\@ifstar {<first>}{<second>}}
+Inspired by \LaTeX.
+Looks at the following character, if it is an asterisk, executes {\it first} and otherwise executes {\it second}.
+The asterisk is removed from the stream.
+\emacroexp
+
+\macroexp{\_nopt {<dim expression>}}
+Expands to the computation of {\it dim expression} (a dimension expression) without the trailing {\tt pt}.
+\emacroexp
+
+\macroexp{\_noptfloor {<dim expression>}}
+Expands to the whole part of the computation of {\it dim expression} (a dimension expression) without the trailing {\tt pt}.
+\emacroexp
+
+\macroexp{\literal <macro definition>}
+Equivalent to \inlinecode|\def\X<macro definition>\X|.
+\emacroexp
+
+\macroexp{\_getline <macro>}
+Reads until a linebreak and then passes that to {\it macro} as its parameter.
+\emacroexp
+
+\macroexp{\reverse <macro>{<list>}}
+Reverses {\it list} and puts the result in {\it macro}.
+\emacroexp
+
+\subsection{Setters}
+
+\pdftoolbox{} has a concept of {\it setters}: these are the macros used for defining things.
+There are four three: \inlinecode|\currlet, \currdef, \curredef, \currset|\anchormacro\currdef.
+These generally alternate between \inlinecode|\let, \def, \edef, \empty| and \inlinecode|\glet, \gdef, \xdef, \global|.
+You can change the definitions via \macro\localsetters\anchormacro\localsetters{} and \macro\globalsetters\anchormacro\globalsetters.
+
+So for example, if you'd like to use an array and make the changes global, you'd first execute \macro\globalsetters.
+
+\subsection{Repeating Macros}
+
+\macroexp{\commap <macro>{<list>}}
+If {\it list} is a comma-separated list of the form {\tt x1,\dots,xN} and {\it macro} is \macro\X, this will execute \inlinecode|\X{x1}...\X{xN}|.
+\emacroexp
+
+\macroexp{\map <macro>{<list>}}
+If {\it list} is a list of the form \inlinecode|x1\dots xN| where each {\tt xI} is a group or a single token, and {\it macro} is \macro\X, this will execute \inlinecode|\X{x1}...\X{xN}|.
+\emacroexp
+
+\macroexp{\_repeat {<times>}{<code>}}
+Executes {\it code} {\it times} times.
+\emacroexp
+
+\macroexp{\_prepeat {<times>}<macro>}
+If {\it times} is {\tt N} and {\it macro} \macro\X, executes \inlinecode|\X{1}...\X{N}|.
+\emacroexp
+
+\macroexp{\_varrepeat {<start>}{<stop>}{<step>}<comparison><macro>}
+If {\it macro} is \macro\X, {\it start} is {\tt i}, step is {\tt d}, and stop is {\tt f}: executes \inlinecode|\X{i}\X{i+d}\X{i+2d}...\X{i+Nd}| until the condition (\inlinecode|i+Nd /it comparison /tt f|) is satisfied.
+\emacroexp
+
