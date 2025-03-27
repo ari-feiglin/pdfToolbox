@@ -60,11 +60,12 @@ The default size is required.
 
 \pdftoolbox{} provides the following fonts:
 
+\emacroexp
+
 \quitvmode\vbox{\tabskip=.5cm\halign{&\hfil#:\tabskip=0pt&\ \tt#\hfil\tabskip=.5cm\cr
 rm&cmr&it&cmti&bf&cmbx&sc&cmcsc&mi&cmmi&sy&cmsy&ex&cmex&sl&cmsl\cr
 ss&cmss&tt&cmtt&msam&msam&msbm&msbm&eufm&eufm&rsfs&rsfs\cr
 }}
-\emacroexp
 
 \macroexp{\applyfontcode <font code>}
 Applies the font specified by {\it font code}.
@@ -213,7 +214,8 @@ To add text in between items (not as part of the list), you can use \macro\mtext
 In {\tt pdfDstruct/tableofcontents.tex}, \pdftoolbox{} provides macros for creating and displaying tables of content.
 
 \macroexp{\addtoccontent {<marker>}{<title>}{<value>}{<depth>}{<anchor>}}
-Adds content to the table of contents whose marker is {\it marker} (e.g. $1.1$; this is printed to the left of the title), title is {\it title} (e.g. chapter name), value is {\it value} (e.g. page number), depth is {\it depth},
+Adds content to the table of contents.
+The marker is {\it marker} (e.g. $1.1$; this is printed to the left of the title), title is {\it title} (e.g. chapter name), value is {\it value} (e.g. page number), depth is {\it depth},
 and is linked to the anchor {\it anchor}.
 The depth {\it depth} determines the style used in the table (see \gotomacro\settocdepthformat).
 \emacroexp

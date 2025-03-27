@@ -1,4 +1,4 @@
-\input pdfToolbox-utils
+\input ptb-utils
 
 \_checkloaded{colors}
 
@@ -16,19 +16,20 @@
 
 %\def\_colorbg_set#1#2{\pdfcolorstack\_colorstack push{\csname _#1_encodebg\endcsname{#2}}\aftergroup\_pdfcolor_restore}
 %\def\_colorfg_set#1#2{\pdfcolorstack\_colorstack push{\csname _#1_encodefg\endcsname{#2}}\aftergroup\_pdfcolor_restore}
+\def\_color_set#1#2{\_setcolor_code{\csname _#1_encode\endcsname{#2}}}
 \def\_colorbg_set#1#2{\_setcolor_code{\csname _#1_encodebg\endcsname{#2}}}
 \def\_colorfg_set#1#2{\_setcolor_code{\csname _#1_encodefg\endcsname{#2}}}
+
+\def\_color_defined#1{\expanded{\noexpand\_color_set\csname c@#1\endcsname}}
 \def\_colorbg_defined#1{\expanded{\noexpand\_colorbg_set\csname c@#1\endcsname}}
 \def\_colorfg_defined#1{\expanded{\noexpand\_colorfg_set\csname c@#1\endcsname}}
 
-%   \__color_get_code{rgb/cmyk}{code}{fg/bg/empty}
+%\def\_color_set#1#2{\pdfcolorstack\_colorstack push{\csname _#1_encode\endcsname{#2}}\aftergroup\_pdfcolor_restore}
+%   \_color_get_code{rgb/cmyk}{code}{fg/bg/empty}
 \def\_color_get_code#1#2#3{\csname _#1_encode#3\endcsname{#2}}
 %   \_color_get_defined{color name}{fg/bg/empty}
 \def\_color_get_defined#1#2{\expanded{\noexpand\_color_get_code\csname c@#1\endcsname{#2}}}
 
-\def\_color_set#1#2{\_setcolor_code{\csname _#1_encode\endcsname{#2}}}
-%\def\_color_set#1#2{\pdfcolorstack\_colorstack push{\csname _#1_encode\endcsname{#2}}\aftergroup\_pdfcolor_restore}
-\def\_color_defined#1{\expanded{\noexpand\_color_set\csname c@#1\endcsname}}
 
 \def\__getcolorparam#1#2#3#4{%
     \ifx^#3^%

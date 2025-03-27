@@ -1,0 +1,78 @@
+Due to the nature of its use, most of the macros defined in the pdfData section have already been explained.
+The only part of pdfData which requires explanation regarding its internals is mappings, which offers richer features than already explained.
+
+\subsection{Mappings}
+
+Mappings are stored in two places: a {\it key list}, which is simply a macro consisting of pairs of the form \inlinecode|{key}{value}|, and macros \inlinecode|\key@k| (the second {\tt k} is variable in the name) whose definition
+is {\tt v}.
+
+Essentially, the major macro in this part is \macro\_mapkeys_with_setter\anchormacro\_mapkeys_with_setter.
+Its usage is
+
+\getmacrousage{\_mapkeys_with_setter <mapkey macro><key macro>{<map>}}
+where {\it mapkey macro} is the macro which manages the creation of a key-value pair (explained below), {\it key macro} is a macro to store
+the list of keys, and {\it map} is a map of key-value pairs.
+
+What happens is \macro\_mapkeys_with_setter{} will iterate over {\it map} and for every key-value pair $({\tt k,v})$ if the setter {\it mapkey macro} is \macro\M{} and {\it key macro} is \macro\K{}, it calls
+\inlinecode|\M \K{k}{v}|.
+This should (if \macro\M{} is defined properly) update \macro\K{} to include the pair $({\tt k,v})$.
+Furthermore, it should store the value {\tt v} in the macro \inlinecode|\key@k| (the second {\tt k} is variable in the name).
+
+The macro \macro\_update_lastkeys{} is provided for the former: to update \macro\K{}.
+Simply pass \inlinecode|\_update_lastkeys \K{k}{v}|.
+The simplest setter ({\it mapkey macro}) is \macro\_vanilla_mapkey\anchormacro\_vanilla_mapkey, which does exactly what was described and nothing more.
+Its definition is simply:
+
+\begincode
+\def\_vanilla_mapkey#1#2#3{%
+    \_xp\def\csname key@\_id#2\endcsname{#3}%
+    \_update_lastkeys{#1}{#2}{#3}%
+}
+/endcode
+
+You can use the macro \macro\getvalue\anchormacro\getvalue{} to get the value of a key: its definition is simply
+
+\begincode
+\def\getvalue#1{%
+    \csname key@#1\endcsname%
+}
+/endcode
+
+Another macro is \macro\keyexists{} whose use is
+
+\getmacrousage{\keyexists {<key>}<macro><key list>}
+It checks if the key {\it key} is in {\it key list}, and if it is, defines {\it macro} to be equal to the key.
+Otherwise {\it macro} is defined to be \macro\_nul.
+For this reason, if you'd like a key to have no value, it is advised to use the \macro\novalue{} macro (whose definition is just \macro\novalue).
+
+Another setter is \macro\_vardef_mapkey\anchormacro\_vardef_mapkey, whose only difference from \macro\_vanilla_mapkey{} is that instead of \macro\def ing \inlinecode|\key@k| to be equal to {\tt v}, \macro\_vardef_mapkey{} uses
+\macro\_vardef{} instead of \macro\def{} (which can be set before calling \macro\_vardef_mapkey), and \macro\_vardef s \inlinecode|\key@k| to be the (once) expansion of \inlinecode|\_varmap{v}| (where \macro\_varmap) can also be
+set before calling (\macro\_vardef_mapkey).
+
+\macro\mapkeys{} is defined as follows:
+
+\begincode
+\def\mapkeys#1#2{%
+    \_mapkeys_with_setter\_vanilla_mapkey\_keymappings{#1}%
+    \_xp\_setdefaults\_xp{\_keymappings}%
+    \_mapkeys_with_setter\_protected_mapkey\lastkeys{#2}%
+    \_check_required_supplied%
+}
+/endcode
+
+So first it gets the key-value pairs in {\it options} (\inlinecode|#1|) using \macro\_vanilla_mapkey; it places the results in \macro\_keymappings.
+Then it sets the default values (this is what \macro\_setdefaults{} does; as well as figuring out which keys are required).
+Then \macro\mapkeys{} calls \gotomacro\_mapkeys_with_setter{} using the setter \gotomacro\_protected_mapkey{} on {\it input} (\inlinecode|#2|).
+It stores the results in \macro\lastkeys\anchormacro\lastkeys.
+Then it checks that the required keys have been supplied (\macro\_check_required_supplied).
+
+The setter \macro\_protected_mapkey\anchormacro\_protected_mapkey{} is more complicated than the previously-discussed setters.
+Its use, like all setters, is
+
+\getmacrousage{\_protected_mapkey <key list>{<key>}{<value>}}
+
+But in this case, {\it key} has a value also in \macro\_keymappings{} as well; this value corresponds to another map containing the settings of {\it key} ({\tt name}, {\tt default}, {\tt required}, etc.).
+So now \macro\_protected_mapkey{} will find the settings of {\it key}, and get the values of each field (via \macro\_mapkeys_with_setter).
+Then it calls \macro\_vardef_mapkey{} with {\it key} and {\it value}, using the definitions of \macro\_vardef{} and \macro\_varmap{} according to the settings.
+Finally it sets the macro {\tt name} (if provided in the settings) to be equal to the value.
+

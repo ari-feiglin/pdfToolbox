@@ -3,18 +3,21 @@
 
 \let\olduscore=\_
 
-\input pdfToolbox-utils
+\input ptb-utils
 
 \_checkloaded{pdfToolbox}
 
-\def\pdfToolboxversion{0.0.1}
-\def\pdfToolboxdate{September 20, 2023}
+\def\pdfToolboxversion{0.1}
+\def\pdfToolboxdate{March, 2025}
 
 \say{This is pdfToolbox, version \pdfToolboxversion (\pdfToolboxdate)}
 
-\input pdfData
-\input pdfGraphics
-\input pdfDstruct
+\input ptb-pdfData
+\input ptb-pdfGraphics
+\input ptb-pdfDstruct
+
+\def\@pdftoolbox[#1]{{\setfontandscale{bf}{#1}\localcolor rgb{1 0 0}{PDF}\localcolor rgb{0 0 1}{\setscale{#1+5pt}T}\localcolor rgb{0 .9 0}{OOLBOX}}}
+\def\pdftoolbox{\@ifnextchar[ \@pdftoolbox {\@pdftoolbox[\dimexpr\currscale-3pt\relax]}}
 
 \let\_=\olduscore
 

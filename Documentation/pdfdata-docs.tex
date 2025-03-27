@@ -3,7 +3,7 @@ The pdfData section of the \pdftoolbox{} toolbox is meant for creating instances
 \subsection{Arrays}
 
 In the {\tt pdfData/arrays} file, \pdftoolbox{} defines various macros for creating and manipulating arrays.
-\pdftoolbox{} defines two types of arrays, which are different in the macros used for them and the way they are stored internally.
+There are two types of arrays, which are different in the macros used for them and the way they are stored internally.
 \blist
     \item (Normal) arrays: these arrays are stored in the traditional way: an array $[1;2;3]$ is stored in a macro whose meaning is equivalent to \inlinecode|\X{1}\X{2}\X{3}|.
     Manipulation of the array is done by defining \macro\X, and then executing the array macro.
@@ -141,8 +141,8 @@ Otherwise \macro\@return@value{} is set to \macro\False.
 
 \subsection{Stacks}
 
-In the {\tt pdfData/stacks.tex} file, \pdftoolbox{} offers macros for creating and manipulating stack data-structures.
-\pdftoolbox{} offers two types of stacks, which differ in how they store their data.
+In the {\tt pdfData/stacks.tex} file, \pdftoolbox{} offers macros for creating and manipulating stack data structures.
+There are two types of stacks, which differ in how they store their data.
 They are generally used for different purposes:
 
 \blist
@@ -308,7 +308,7 @@ Expands to the value of {\it key} in the dictionary {\it name}.
 Sets \macro\@return@value{} according to if {\it key} is found in the dictionary {\it name}.
 \emacroexp
 
-\subsection{Key-Value Parameters}
+\subsection{Mappings}
 
 In {\tt pdfData/key-value.tex}, \pdftoolbox{} implements the ability to pass key-value parameters to macros.
 

@@ -7,11 +7,11 @@
 
 \footline={}
 
-\pageborder{rgb{.5 .5 1}}{rgb{0 0 .4}}{5}
+\headline={\pageborder{rgb{.5 .5 1}}{rgb{0 0 .4}}{5}}
 
 \color rgb{.1 0 .8}
 
-\hbox to \dimexpr\hsize-\_actual_curve_buf\relax{\hfill Version \version}
+\hbox to \dimexpr\hsize-\_actual_curve_buf\relax{\hfill Version \pdfToolboxversion}
 \kern-5pt
 {\def\boxshadowcolor{rgb{.3 .3 .8}}
 \bppbox{rgb{.6 .6 1}}{rgb{0 0 .4}}{rgb{.1 0 .4}}
@@ -38,6 +38,7 @@
 
 }
 
+\eject
 \color{black}
 
 \pageno=1
@@ -71,6 +72,18 @@
 \section{Utilities}
 
 \input pdftoolbox-utils-docs
+
+\section{pdfData Internals}
+
+\input pdfdata-internal-docs
+
+\section{pdfGraphics Internals}
+
+\input pdfgraphics-internal-docs
+
+\part{Acknowledgments}
+
+\input acknowledgments
 
 \bye
 

@@ -31,19 +31,19 @@ The following colors are defined:
 \centerline{\red{red} \blue{blue} \green{green} \yellow{yellow} \orange{orange} \purple{purple} \highlightbox{black}{\white{white}} \black{black} \darkgreen{darkgreen} \grey{grey}}
 \emacroexp
 
-\macroexp{\highlightbox <color space>{<code>}{<material>}
+\macroexp{\highlightbox <color space>{<code>}{<material>}/cr
 \highlightbox {<name>}{<material>}}
 Colors the background of the material {\it material} according to the color provided.
 For example \inlinecode|\highlightbox {red}{pdfToolbox}| will yield \highlightbox{red}{pdfToolbox}.
 \emacroexp
 
-\macroexp{\coloredbox <color space>{<code>}{<material>}
+\macroexp{\coloredbox <color space>{<code>}{<material>}/cr
 \coloredbox {<name>}{<material>}}
 Like \gotomacro\highlightbox{} but adds a buffer of space around {\it material} in accordance with \macro\bufferwidth\anchormacro\bufferwidth{} and \macro\bufferheight\anchormacro\bufferheight.
-For example \inlinecode|\coloredbox {red}{pdfToolbox}| will yield \coloredbox{red}{pdfToolbox}.
+For example the following code: \inlinecode|\coloredbox {red}{pdfToolbox}|; will yield \coloredbox{red}{pdfToolbox}.
 \emacroexp
 
-\macroexp{\framecoloredbox <color space>{<code>}{<material>}
+\macroexp{\framecoloredbox <color space>{<code>}{<material>}/cr
 \framecoloredbox {<name>}{<material>}}
 Like \gotomacro\coloredbox{} but adds a frame around {\it material} of width \macro\framewidth.
 For example \inlinecode|\framecoloredbox {red}{pdfToolbox}| will yield \framecoloredbox{red}{pdfToolbox}.
@@ -78,9 +78,9 @@ Bolds the material {\it material} (essentially just thickening the stroke width 
 \quitvmode\flip{flips} {\it material} about its vertical axis.
 \emacroexp
 
-\subsection{Pretty Textboxes}
+\subsection{Colorboxes}
 
-In {\tt pdfGraphics/colorboxes.tex}, \pdftoolbox{} provides macros for pretty printing textboxes.
+In {\tt pdfGraphics/colorboxes.tex}, \pdftoolbox{} provides macros for pretty printing textboxes (ppboxes).
 These are simply colored textboxes which can split across pages.
 There are two kinds of pretty textboxes: {\tt ppbox}es and {\tt linedppbox}es.
 
@@ -119,7 +119,7 @@ Creates a node by the name of {\it name} with text {\it text} at coordinate $(x,
 You can access the following values (called node-relative coordinates): {\tt<name>.left}, {\tt<name>.top}, {\tt<name>.right}, {\tt<name>.bottom}, {\tt<name>.xcenter}, {\tt<name>.ycenter}.
 \emacroexp
 
-\macroexp{\drawpath {<start x>}{<start y>}{<end x>}{<end y>}{<x off>}{<y off>}{<start cap>}{<end cap>}{<color>}}
+\macroexp{\drawpath {<start x>}{<start y>}{<end x>}{<end y>}{<x off>}{<y off>}{<start cap>}{<end cap>}{<color>}}\hfill\break
 Draws a line from $(\hbox{\it start x},\hbox{\it start y})$ to $(\hbox{\it end x},\hbox{\it end y})$.
 This is offset by {\it off x} on the $x$-axis and {\it off y} on the $y$-axis (these are dimensions).
 {\it start cap} is the linecap used at the starting point, and {\it end cap} is the linecap used at the end point (see \gotomacro\definelinecap).
@@ -128,7 +128,7 @@ The line is drawn in the color {\it color}.
 The coordinates may be numeric values or node-relative coordinates (see \gotomacro\addnode).
 \emacroexp
 
-\macroexp{\drawbezier {<start x>}{<start y>}{<end x>}{<end y>}{<off>}{<curvature>}{<start cap>}{<end cap>}{<color>}}
+\macroexp{\drawbezier {<start x>}{<start y>}{<end x>}{<end y>}{<off>}{<curvature>}{<start cap>}{<end cap>}{<color>}}\hfill\break
 Draws a curve from $(\hbox{\it start x},\hbox{\it start y})$ to $(\hbox{\it end x},\hbox{\it end y})$ with curvature {\it curvature}.
 This is offset by {\it off}, which must be a pair of the form \inlinecode|{<x off>}{<y off>}| corresponding to the $x$-axis offset and $y$-axis offset respectively (dimensions).
 {\it start cap} is the linecap used at the starting point, and {\it end cap} is the linecap used at the end point (see \gotomacro\definelinecap).
@@ -175,8 +175,8 @@ Draws an arrow in a \macro\drawdiagram{} diagram.
     \item {\tt curve}: the amount to curve the arrow;
     \item {\tt dashed} (valueless): add to make the arrow line dashed;
     \item {\tt dotted} (valueless): add to make the arrow line dotted;
-    \item {\tt origin orient}: the placement of the start of the arrow relative to the origin (a pair like \inlinecode|{left,bottom}|);
-    \item {\tt dest orient}: the placement of the end of the arrow relative to the destination (a pair like \inlinecode|{left,bottom}|).
+    \item {\tt origin orient}: the placement of the start of the arrow relative to the origin\hfill\break (a pair like \inlinecode|{left,bottom}|);
+    \item {\tt dest orient}: the placement of the end of the arrow relative to the destination\hfill\break (a pair like \inlinecode|{left,bottom}|).
 \elist
 \emacroexp
 

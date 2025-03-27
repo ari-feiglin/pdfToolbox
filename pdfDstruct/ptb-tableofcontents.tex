@@ -1,11 +1,11 @@
-\input pdfToolbox-utils
+\input ptb-utils
 
 \_checkloaded{tableofcontents}
 
-\input pdfData
-\input pdfDstruct/fonts
-\input pdfDstruct/hooks
-\input pdfDstruct/hyperlinks
+\input ptb-pdfData
+\input pdfDstruct/ptb-fonts
+\input pdfDstruct/ptb-hooks
+\input pdfDstruct/ptb-hyperlinks
 
 \newwrite\_tocwrite
 \newread\_tocread
@@ -173,7 +173,7 @@
     \gdef\currsubsection{#1}%
     \gdef\currsubsubsection{#1}%
     \addtoccontent{\the\counter{part}}{#1}{\the\pageno}{0}{part@\the\counter{part}}%
-    \vbox to\vsize{\vfil\centerline{\setfontandscale{bf}{40pt}\upperroman{\the\counter{part}} #1}\vfil}%
+    \vbox to\vsize{\vfil\centerline{\setfontandscale{sc}{40pt}\upperroman{\the\counter{part}}. #1}\vfil}%
 }
 
 \def\_section#1{%

@@ -63,7 +63,7 @@ Reverses {\it list} and puts the result in {\it macro}.
 \pdftoolbox{} has a concept of {\it setters}: these are the macros used for defining things.
 There are four three: \inlinecode|\currlet, \currdef, \curredef, \currset|\anchormacro\currdef.
 These generally alternate between \inlinecode|\let, \def, \edef, \empty| and \inlinecode|\glet, \gdef, \xdef, \global|.
-You can change the definitions via \macro\localsetters\anchormacro\localsetters{} and \macro\globalsetters\anchormacro\globalsetters.
+You can change the definitions via the two macros \macro\localsetters\anchormacro\localsetters{} and \macro\globalsetters\anchormacro\globalsetters.
 
 So for example, if you'd like to use an array and make the changes global, you'd first execute \macro\globalsetters.
 

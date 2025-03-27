@@ -1,0 +1,111 @@
+\subsection{Colors}
+
+There are some useful macros in the {\tt pdfGraphics/colors.tex}, here we describe them.
+
+\bwarning
+These macros and file require a clean-up.
+Unfortunately many other macros are dependent on them, and I am scared to significantly alter anything.
+One day, though.
+\eppbox
+
+\macroexp{\_rgb_encode {<rgb code>}/cr
+\_rgb_encodebg {<rgb code>}/cr
+\_rgb_encodefg {<rgb code>}/cr
+\_cmyk_encode {<cmyk code>}/cr
+\_cmyk_encodebg {<cmyk code>}/cr
+\_cmyk_encodefg {<cmyk code>}}
+Gets the code for the specified color for the foreground or background or both.
+\emacroexp
+
+\macroexp{\_setcolor_code {<pdf code>}}
+Sets the current color using {\it pdf code} (which can be obtained using one of the above macros).
+Essentially just pushing {\it pdf code} onto the color stack.
+After the current group, calls \gotomacro\_pdfcolor_restore.
+\emacroexp
+
+\macroexp{\_pdfcolor_restore}
+Restores the color (pops from the color stack).
+\emacroexp
+
+\macroexp{\_color_set {<color space>}{<color code>}/cr
+\_colorbg_set {<color space>}{<color code>}/cr
+\_colorfg_set {<color space>}{<color code>}}
+Sets the current color using {\it color code} according to {\it color space} (either {\tt rgb} or {\tt cmyk}).
+\emacroexp
+
+\macroexp{\_color_defined {<name>}/cr
+\_colorbg_defined {<name>}/cr
+\_colorfg_defined {<name>}}
+Sets the current color according to the color {\it name} (see \gotomacro\definecolor).
+\emacroexp
+
+\macroexp{\_getcolorparam <macro>{<place>}<color>}
+Gets the pdf code for {\it color} (which may be of the form \inlinecode|rgb{...}|, \inlinecode|cmyk{...}|, or \inlinecode|{name}|), and calls {\it macro} with it as a parameter.
+{\it place} is either {\tt fg}, {\tt bg}, or left empty.
+\emacroexp
+
+\macroexp{\_setcolor {<place>}{<color>}}
+Sets the current color according to {\it place} and {\it color}.
+{\it place} is either {\tt fg}, {\tt bg}, or left empty.
+\emacroexp
+
+\macroexp{\_getcolor {<place>}{<color>}}
+Expands to the pdf code for {\it color} ({\it place} is either {\tt fg}, {\tt bg}, or left empty).
+\emacroexp
+
+\section{Colorboxes}
+
+\pdftoolbox{} provides a relatively simple interface for creating colorboxes like \macro\bppbox.
+The main macro is \macro\_splitcontentbox\anchormacro\_splitcontentbox, whose usage is
+
+\getmacrousage{\_splitcontentbox {<buffer>}<macro>}
+
+Which repetitively splits the box \macro\_contentbox\anchormacro\_contentbox{} into \macro\_splitbox{} to fill the remaining material on a page or in the box itself.
+Then the split box is passed to {\it macro} for pretty formatting.
+{\it buffer} is the total amount of vertical buffering that {\it macro} adds to the box it prints.
+
+So to create your own prettyprint-box (ppbox), you create two macros, say \macro\beginpp{} and \macro\endpp.
+In \macro\beginpp{} you add the code which should go before the ppbox and starts getting content for \macro\_contentbox.
+For example, it could be as simple as:
+
+\begincode
+\def\beginpp#1#2{%
+    \def\_colorcontentbox{%
+        \hbox{\coloredbox{#1}{\_setcolor{}{#2}\box\_splitbox}}%
+    }%
+    \par\kern.5cm\null\par%
+    \setbox\_contentbox=\vbox\bgroup
+        \hsize=\dimexpr\hsize-\bufferwidth * 2\relax%
+}
+
+\def\endpp{%
+    \egroup%
+    \_splitcontentbox{\bufferwidth * 2}\_colorcontentbox%
+    \kern.5cm\relax%
+}
+/endcode
+
+This creates a ppbox which is simply a wrapper around \gotomacro\coloredbox.
+It colors the background in \inlinecode|#1| and the foreground in \inlinecode|#2|.
+
+In depth, here's how it works:
+\benum
+    \item First, \macro\beginpp{} defines \macro\_colorcontentbox{} to simply place \macro\_splitbox{} into a \macro\coloredbox{} of color \inlinecode|#1|, and sets the foreground color to \inlinecode|#2|.
+    \item Then it adds some space before the start of the first ppbox.
+        The reason for the \inlinecode|\null\par| is to move the kern from the list of recent contributions to the main vertical list (see, e.g. the \TeX book for more information on \TeX's output routines).
+    \item Then \macro\beginpp{} begins reading content for \macro\_contentbox.
+        It alters \macro\hsize{} to compensate for the buffer added by \macro\coloredbox.
+    \item When \macro\endpp{} is called, it first stops the capture of \macro\_contentbox{} with \macro\egroup.
+    \item Then it calls \inlinecode|\_splitcontentbox{\bufferwidth * 2}\_colorcontentbox|, which splits the captured material (in \macro\_contentbox) and places each \macro\_splitbox{} in \macro\_colorcontentbox, which was
+        defined in \macro\beginpp.
+        \inlinecode|\bufferwidth * 2| corresponds to the amount of vertical buffering \macro\_colorcontentbox{} adds to \macro\_splitbox.
+    \item \macro\endpp{} adds buffering after the final ppbox.
+\eenum
+
+\subsection{Illustrating} \anchor{internal-pdfdraw}
+
+\bwarning
+This is a complicated and messy part of \pdftoolbox.
+Documentation will be added once it is cleaned up.
+\eppbox
+

@@ -1,11 +1,6 @@
 \catcode`@=11
 \catcode`_=11
 
-\def\version{0.1}
-
-\def\@pdftoolbox[#1]{{\setfontandscale{bf}{#1}\localcolor rgb{1 0 0}{PDF}\localcolor rgb{0 0 1}{\setscale{#1+5pt}T}\localcolor rgb{0 .9 0}{OOLBOX}}}
-\def\pdftoolbox{\@ifnextchar[ \@pdftoolbox {\@pdftoolbox[\dimexpr\currscale-3pt\relax]}}
-
 \def\bwarning{\bppbox{rgb{1 .6 .6}}{rgb{.4 0 0}}{rgb{.4 0 0}}}
 \def\bnote{\bppbox{rgb{1 1 .6}}{rgb{.4 .4 0}}{rgb{.4 .4 0}}}
 
@@ -82,6 +77,7 @@
 \def\emacrousage{\crcr\egroup\egroup\par\smallskip\centerline{\box0}\egroup\par\smallskip}
 \def\emacrousageB{\crcr\egroup\egroup\box0\egroup}
 
+\def\getmacrousage#1{{\_macrousage*\scantokens{#1}\emacrousage}}
 \def\getmacrousageB#1{{\_macrousage*\scantokens{#1}\emacrousageB}}
 
 \def\macroname#1{{\tt\string#1}}
