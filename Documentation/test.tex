@@ -1,10 +1,25 @@
 \input pdfToolbox
 
-\drawdiagram{
-A&B&C
-}{
-\diagarrow{from={1,1}, to={1,2}, origin orient={left,bottom}}
+\loadsyntax{TeX}
+\setsyntax{TeX}
+
+\blisting
+\def\getinput#1{
+    \mapkeys{
+        first={
+            name=fst,
+            required,
+            definition=\edef,
+            mapping=\puthi
+        },
+        second={
+            name=snd,
+            default=A. Feiglin
+        }
+    }{#1}
 }
+\elisting
+
+\say{\the\catcode`\ }
 
 \bye
-

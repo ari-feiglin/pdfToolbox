@@ -39,7 +39,7 @@ This will add a font by the name {\it name} so that it is accessible by \pdftool
 {\it sizes} is a key-value dictionary which specifies the font codes for different sizes of the font.
 For example, in {\tt pdfDstruct/fonts.tex} is the usage:
 
-\beginhi \color{white}
+\blisting
 \addfont{rm}{%
     default=cmr10,
     5pt=cmr5,
@@ -51,7 +51,7 @@ For example, in {\tt pdfDstruct/fonts.tex} is the usage:
     12pt=cmr12,
     17pt=cmr17
 }
-\endhi
+\elisting
 
 So now \pdftoolbox{} has access to the computer modern roman font ({\tt cmr}) at the sizes specified.
 The purpose of the default size is for when a size is not available.

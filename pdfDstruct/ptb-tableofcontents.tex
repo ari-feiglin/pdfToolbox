@@ -70,13 +70,6 @@
 
 \def\dotfill{\xleaders\hbox{$\m@th\mkern1.5mu\hbox{.}\mkern1.5mu$}\hfill}
 
-\def\setmacrotolen#1#2{{%
-    \ifx\undefined#1%
-        \setbox0=\hbox{#2}%
-        \xdef#1{\the\wd0}%
-    \fi%
-}}
-
 \def\settomax#1#2{{%
     \setbox0=\hbox{#2}%
     \ifdim\wd0>#1 %

@@ -6,6 +6,8 @@
 
 \def\LaTeX{L\kern-.36em{\setbox0=\hbox{T}\vbox to\ht0{\hbox{\sevenrm A}\vss}}\kern-.15em\TeX}
 
+\def\_setupverb{\setupverb\catcode`\ =10\relax}
+
 \chardef\fslash=`\/
 {\catcode`\^^M=\active%
 \gdef\begincode{%
@@ -32,21 +34,9 @@
     \egroup%
 }
 
-\def\setupverb{%
-    \catcode`\ =\active%
-    \catcode`\{=12%
-    \catcode`\}=12%
-    \catcode`\/=0%
-    \catcode`\$=12%
-    \catcode`\\=12%
-    \catcode`\#=12%
-    \catcode`\%=12%
-    \catcode`\_=12%
-}
-
 \def\inlinecode#1{
     \bgroup%
-    \setupverb%
+    \_setupverb%
     \catcode`#1=2%
     \tt%
 }
@@ -93,5 +83,5 @@
 
 \def\gotomacro#1{\gotoanchor{\string#1}{{\tt\string#1}}}
 
+\def\displaycode#1{\centerline{\vbox{\def\cr{\crcr\relax}\halign{\hfil\gdef\@@{##}{\_setupverb\tt\scantokens\_xp\_xp\_xp{\_xp\_gobble\@@}}: &\_gobble{##}\@@\hfil\crcr\relax#1\crcr}}}}
 
-\def\displaycode#1{\centerline{\vbox{\def\cr{\crcr\relax}\halign{\hfil\gdef\@@{##}{\setupverb\tt\scantokens\_xp\_xp\_xp{\_xp\_gobble\@@}}: &\_gobble{##}\@@\hfil\crcr\relax#1\crcr}}}}

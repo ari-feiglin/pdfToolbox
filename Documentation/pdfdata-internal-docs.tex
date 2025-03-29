@@ -23,20 +23,20 @@ Simply pass \inlinecode|\_update_lastkeys \K{k}{v}|.
 The simplest setter ({\it mapkey macro}) is \macro\_vanilla_mapkey\anchormacro\_vanilla_mapkey, which does exactly what was described and nothing more.
 Its definition is simply:
 
-\begincode
+\blisting
 \def\_vanilla_mapkey#1#2#3{%
     \_xp\def\csname key@\_id#2\endcsname{#3}%
     \_update_lastkeys{#1}{#2}{#3}%
 }
-/endcode
+\elisting
 
 You can use the macro \macro\getvalue\anchormacro\getvalue{} to get the value of a key: its definition is simply
 
-\begincode
+\blisting
 \def\getvalue#1{%
     \csname key@#1\endcsname%
 }
-/endcode
+\elisting
 
 Another macro is \macro\keyexists{} whose use is
 
@@ -51,14 +51,14 @@ set before calling (\macro\_vardef_mapkey).
 
 \macro\mapkeys{} is defined as follows:
 
-\begincode
+\blisting
 \def\mapkeys#1#2{%
     \_mapkeys_with_setter\_vanilla_mapkey\_keymappings{#1}%
     \_xp\_setdefaults\_xp{\_keymappings}%
     \_mapkeys_with_setter\_protected_mapkey\lastkeys{#2}%
     \_check_required_supplied%
 }
-/endcode
+\elisting
 
 So first it gets the key-value pairs in {\it options} (\inlinecode|#1|) using \macro\_vanilla_mapkey; it places the results in \macro\_keymappings.
 Then it sets the default values (this is what \macro\_setdefaults{} does; as well as figuring out which keys are required).

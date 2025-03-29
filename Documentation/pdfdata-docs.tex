@@ -214,7 +214,7 @@ The usage is simple and as follows:
 \eenum
 So for example,
 
-\beginhi \color{white}
+\blisting
 \def\X{0}
 \beginscope
     \localize\X
@@ -227,12 +227,12 @@ So for example,
     \X
 \endscope
 \X
-\endhi
+\elisting
 
 Will output 1 2 2 0.
 As opposed to
 
-\beginhi \color{white}
+\blisting
 \def\X{0}
 \bgroup
     \def\X{1}
@@ -244,7 +244,7 @@ As opposed to
     \X
 \egroup
 \X
-\endhi
+\elisting
 
 Which will output 1 2 1 0.
 
@@ -327,7 +327,7 @@ Or the value may be empty (no array), which means it is {\it valueless} and acts
 
 So for example, you may have a macro defined like so:
 
-\beginhi \color{white}
+\blisting
 \def\puthi#1{Hello (#1)}
 
 \def\getinput#1{%
@@ -340,16 +340,16 @@ So for example, you may have a macro defined like so:
         },
         second={
             name=snd,
-            default=S. Lurp%
+            default=A. Feiglin%
         }%
     }{#1}%
 }
 
 \getinput{first=pdftoolbox}
 (\fst) (\snd)
-\endhi
+\elisting
 
-This will output {\tt (Hello (pdftoolbox)) (S. Lurp)}.
+This will output {\tt (Hello (pdftoolbox)) (A. Feiglin)}.
 
 \macroexp{\keyexists {<key>}<macro>\lastkeys}
 This is an internal command, added to this documentation only due to its usefulness.

@@ -68,7 +68,7 @@ So to create your own prettyprint-box (ppbox), you create two macros, say \macro
 In \macro\beginpp{} you add the code which should go before the ppbox and starts getting content for \macro\_contentbox.
 For example, it could be as simple as:
 
-\begincode
+\blisting
 \def\beginpp#1#2{%
     \def\_colorcontentbox{%
         \hbox{\coloredbox{#1}{\_setcolor{}{#2}\box\_splitbox}}%
@@ -83,7 +83,7 @@ For example, it could be as simple as:
     \_splitcontentbox{\bufferwidth * 2}\_colorcontentbox%
     \kern.5cm\relax%
 }
-/endcode
+\elisting
 
 This creates a ppbox which is simply a wrapper around \gotomacro\coloredbox.
 It colors the background in \inlinecode|#1| and the foreground in \inlinecode|#2|.

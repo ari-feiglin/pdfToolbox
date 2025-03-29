@@ -1,0 +1,23 @@
+\global\newtoks\lstTeXcolors
+\global\newtoks\_TeX_listingcommands
+
+\global\lstTeXcolors={
+    \definecolor{special char}{rgb}{.7 0 .4}
+    \definecolor{macro}{rgb}{1 0 0}
+    \definecolor{math}{rgb}{1 0 0}
+}
+
+\global\_TeX_listingcommands={
+    \the\lstTeXcolors
+    \replace {\string$}{\w\c{math}{\string$}\w}
+    \replace {\string&}{\w\c{special char}{\string&}\w}
+    \replace {\string#}{\w\c{special char}{\string#}\w}
+    \bgroup\lccode`?=`\{\lccode`!=`\}\lccode`.=`\%
+    \lowercase{\egroup
+        \replace ?{\w\c{special char}{?}\w}%
+        \replace !{\w\c{special char}{!}\w}%
+        \replacefromto .\n{\w\c{lst-comment}{.#1}\w\n}%
+    }
+    \replacefromto {\_mstrip\\}\w{\c{macro}{\_mstrip\\#1}\w}
+}
+

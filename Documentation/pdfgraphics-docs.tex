@@ -183,7 +183,7 @@ Draws an arrow in a \macro\drawdiagram{} diagram.
 So for example, 
 
 \bgroup\parindent=\z@
-\beginhi \color{white}
+\blisting
 \drawdiagram{
     A&B\cr
     C&D
@@ -193,7 +193,7 @@ So for example,
     \diagarrow{from={2,2}, to={2,1}, curve=10pt, origin orient={xcenter,bottom}, dest orient={xcenter,bottom}}
     \diagarrow{from={2,1}, to={1,1}, dashed, left cap=o, right cap=o}
 }
-\endhi
+\elisting
 \egroup
 
 Will yield
@@ -211,4 +211,48 @@ Will yield
 Between each row of the diagram, space of width \macro\diagrowbuf{} is added.
 Between each column, \macro\diagcolbuf.
 The height of each row is at least \macro\diagrowheight{} and the width of each column is at least \macro\diagcolwidth.
+
+\subsection{Listings}
+
+In {\tt pdfGraphics/ptb-listings.tex}, \pdftoolbox{} provides macros for writing code listings.
+
+\macroexp{\setupverb}
+This will set up a verbatim environment, essentially changing all special category codes to $12$.
+\emacroexp
+
+\macroexp{\blisting <first line> ... \elisting}
+Writes {\tt...} in a verbatim environment, with syntax highlighting if set (see \gotomacro\loadsyntax{} and \gotomacro\setsyntax).
+{\it first line} (the rest of the line after \macro\blisting) will be executed as normal (so you can set syntax here; see \gotomacro\setsyntax).
+\emacroexp
+
+\macroexp{\loadsyntax {<language>}}
+Loads in the necessary information for {\it language} syntax highlighting.
+The information is input from the ptb-syntax file {\tt ptb-syntax-{\it language}}.
+See the internals of this section for more information on how to write such a file.
+
+Currently \pdftoolbox{} provides support for syntax highlighting of \TeX{} ({\it language} is {\tt TeX}) and of C ({\it language} is {\tt C}).
+\emacroexp
+
+\macroexp{\setsyntax {<language>}}
+Sets the syntax to be used for syntax highlighting.
+This must be used after \macro\loadsyntax{} for {\it language}.
+\emacroexp
+
+Some useful macros for customizing syntax highlighting are the following:
+\blist
+    \item \macro\lstlineskip: the space added between each line in the listing;
+    \item \macro\lstvbuf: the space added before and after the listing;
+    \item \macro\lstlinenumbuf: the kerning added between the number and code on each line in the listing;
+    \item \macro\lstnumfontset: sets the font (and whatever else, e.g. color) of the numbers of each line in the listing;
+    \item \macro\lstfontset: sets the font (and whatever else, e.g. color) of the content of each line;
+    \item \macro\lststrut: the strut added to each line in the listing (for uniform spacing).
+\elist
+
+Some useful colors to be aware of:
+\blist
+    \item {\tt lst-fg}: the default foreground color of the listing;
+    \item {\tt lst-bg}: the background color of the listing;
+    \item {\tt lst-comment}: the colors of comments (must be activated in the ptb-syntax file);
+    \item {\tt lst-number}: the colors of numbers (must be activated in the ptb-syntax file).
+\elist
 
