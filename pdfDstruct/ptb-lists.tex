@@ -24,15 +24,21 @@
 \createcounter{enum count}
 \createcounter{enum depth}
 \_xp\def\csname enumstyle1\endcsname#1{{\bf(#1)}}
+\_xp\setmacrotolen\_xp{\csname enumstyle1@wd\endcsname}{\csname enumstyle1\endcsname{20}}
 \_xp\def\csname enumstyle2\endcsname#1{{\bf(\romannumeral#1)}}
+\_xp\setmacrotolen\csname enumstyle2@wd\endcsname{\csname enumstyle2\endcsname{20}}
 \_xp\def\csname enumstyle3\endcsname#1{{\bf(\_numtoletter{#1})}}
+\_xp\setmacrotolen\csname enumstyle3@wd\endcsname{\csname enumstyle3\endcsname{20}}
 \def\enumindent{.25cm}
 \def\benum{\bgroup\par%
     \setcounter{enum count}{0}%
     \advancecounter{enum depth}{1}%
     \def\item{%
         \par\egroup\advancecounter{enum count}{1}\bgroup\medskip%
-        \setbox0=\hbox{\csname enumstyle\the\counter{enum depth}\endcsname{\the\counter{enum count}}\quad}%
+        \setbox0=\hbox{\hbox to\csname enumstyle\the\counter{enum depth}@wd\endcsname%
+            {\hss\csname enumstyle\the\counter{enum depth}\endcsname{\the\counter{enum count}}}%
+            \quad%
+        }%
         \advance\leftskip by \dimexpr\wd0+\enumindent\relax\noindent\kern-\wd0\box0%
     }%
     \def\mtext{%

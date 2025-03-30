@@ -53,15 +53,17 @@ Sets the current color according to {\it place} and {\it color}.
 Expands to the pdf code for {\it color} ({\it place} is either {\tt fg}, {\tt bg}, or left empty).
 \emacroexp
 
-\section{Colorboxes}
+\subsection{Colorboxes}
 
 \pdftoolbox{} provides a relatively simple interface for creating colorboxes like \macro\bppbox.
 The main macro is \macro\_splitcontentbox\anchormacro\_splitcontentbox, whose usage is
 
-\getmacrousage{\_splitcontentbox {<buffer>}<macro>}
+\getmacrousage{\_splitcontentbox {<buffer>}<macroT><macroS><macroM><macroE>}
 
 Which repetitively splits the box \macro\_contentbox\anchormacro\_contentbox{} into \macro\_splitbox{} to fill the remaining material on a page or in the box itself.
-Then the split box is passed to {\it macro} for pretty formatting.
+Then the split box is passed to {\it macroX} for pretty formatting.
+{\it macroT} is if the material fits entirely on a single page, otherwise the first box uses {\it macroS}, the
+last box uses {\it macroE}, and all intermediate boxes use {\it macroM}.
 {\it buffer} is the total amount of vertical buffering that {\it macro} adds to the box it prints.
 
 So to create your own prettyprint-box (ppbox), you create two macros, say \macro\beginpp{} and \macro\endpp.
@@ -80,7 +82,8 @@ For example, it could be as simple as:
 
 \def\endpp{%
     \egroup%
-    \_splitcontentbox{\bufferwidth * 2}\_colorcontentbox%
+    \_splitcontentbox{\bufferwidth * 2}%
+        \_colorcontentbox\_colorcontentbo\_colorcontentbo\_colorcontentboxxx%
     \kern.5cm\relax%
 }
 \elisting
@@ -102,10 +105,284 @@ In depth, here's how it works:
     \item \macro\endpp{} adds buffering after the final ppbox.
 \eenum
 
+\subsubsection{The Mechanism}
+
+In this section we describe the mechanism through which \pdftoolbox{} creates colorboxes.
+A good reference for this section, which discusses the mechanism through which \TeX{} creates pages (the output routine) is ``The Advanced \TeX book'' by David Salomon.
+
+We begin with a simple macro which expands to the amount of space left in the page.
+\listfile{ptb-colorboxes}[9-15]
+\macro\pagetotal{} is the height of the main vertical list (MVL).
+\macro\pagegoal{} is the goal height of the MVL.
+It is generally equal to \macro\vsize, but when footnotes or similar are generated, their heights are
+subtracted from \macro\pagegoal.
+At the beginning of each page, \macro\pagegoal{} is set to \macro\maxdimen{} (hence the use of the
+\macro\ifdim).
+
+\pdftoolbox{} stores the content to be split across pages in \inlinecode|\box\_contentbox|.
+
+The following macro \macro\_getsplitdim{} gives the dimension that \macro\_contentbox{} should be split into.
+Its parameter is the size of the extra vertical glue that is added to each box.
+\listfile{ptb-colorboxes}[17-41]
+\benum
+    \item First we check if there is enough space to place the entirety of the box into the page.
+        If so set \macro\_splitdim{} to the height of the box, and set \macro\_lastbox{} to true since we wil be placing the entirity of the box.
+    \item Otherwise, check if there is any space left on the current page (recall that \inlinecode|#1| is the
+        amount of vertical space added.)
+        If there is, then set \macro\_splitdim{} to the amount of space left.
+    \item Otherwise, we perform the following checks:
+        \benum
+            \item If \macro\_recheck{} is false, then we add \inlinecode|\null\par| to the page.
+                This just moves all recent contributions to the MVL.
+                The reason for this is that we need to get rid of all the material that came before the
+                colorbox, and we then recheck the dimension, and set \macro\_recheck{} to true.
+            \item Otherwise, the MVL is up-to-date, and there is still not enough room.
+                So we try to fill in the rest of the vertical space and \macro\break.
+                If for whatever reason this doesn't work, we add \macro\vfilneg{} to remove the glue added.
+        \eenum
+        In either case we get the dimension again.
+\eenum
+
+Now, the main macro is \macro\_splitcontentbox:
+\listfile{ptb-colorboxes}[46-77]
+It first sets \macro\splittopskip{} to $0{\tt pt}$ so that no extra glue is added to the top of \macro\vsplit.
+Then \macro\boxmaxdepth{} is also set to $0{\tt pt}$ so that the depth of the split boxes will be $0{\tt pt}$
+and we can deal only with height.
+We also turn off interlineskip so there is no extra glue added around the split boxes (these do not affect
+the contents of \macro\_contentbox{} since it has already been boxed).
+
+Now we repeat until \macro\_contentbox{} is empty:
+\benum
+    \item we get the amount of space to split the box into via \macro\_getsplitdim{} (explained above);
+    \item we split \macro\_contentbox{} into \macro\_splitbox{} of this dimension;
+    \item \inlinecode|#2| is the output routine of the colorbox, it places the contents of \macro\_splitbox{}
+        into whatever format the user specifies.
+        We set \inlinecode|\box0| to this;
+    \item we add the box to the page, and set a penalty of $0$ so that the page can be broken at that point
+        if necessary.
+\eenum
+
+The definition of \macro\bppbox{} and \macro\eppbox{} are a little enlightening:
+\listfile{ptb-colorboxes}[79-116]
+What's of interest here is how \macro\_bppbox{} defines the different \macro\_colorcontentbox s.
+Firstly, \macro\_getdotsnlines{} is a macro which defines \macro\_line{\it side} and \macro\_dot{\it corner} according to the stream of $8$ characters which follow it (until \macro\_nul).
+Now, \macro\_colorcontentboxT{} is defined as you'd expect.
+And \macro\_colorcontentboxS{} is defined so that it preserves the top corners that are input as well as all but the bottom side.
+\macro\_colorcontentboxM{} and \macro\_colorcontentboxE{} are defined similarly.
+
 \subsection{Illustrating} \anchor{internal-pdfdraw}
 
 \bwarning
 This is a complicated and messy part of \pdftoolbox.
 Documentation will be added once it is cleaned up.
 \eppbox
+
+\subsection{Listings} \anchor{internal-listings}
+
+\subsubsection{The Mechanism}
+
+We first begin by discussing the mechanism for how listings work in \pdftoolbox.
+Credit where credit is due; the mechanism is greatly inspired and copied from Petr Ol\v s\'ak's \url{https://ctan.org/pkg/optex?lang=en}{Op\TeX}, though the implementation may differ.
+
+The mechanism is relatively simple: all \pdftoolbox{} does is the following:
+\benum
+    \item call \inlinecode|\the\everylisting| and whatever is given in the remaining line after \macro\blisting;
+    \item call \macro\setupverb{} which changes the catcode of special characters and \inlinecode|^^M| to $12$;
+    \item capture the entirety of the listing from \macro\blisting{} to \macro\elisting;
+    \item set line spacing (via \macro\_setuplstlines);
+    \item call \inlinecode|\the\_commandcapture| which simply sets up macros which are called in \inlinecode|\the\_listingcommands|, which is called immediately afterward (see below);
+    \item call \inlinecode|\the\_commandexecute| which executes the commands added in \inlinecode|\the\_listingcommands| on the listing, and then \inlinecode|\the\_macrocallmanager| which alters the definitions of the macros in
+        \macro\_listingcommands{} to their proper definitions (explanation later);
+    \item at this point, the listing is set up so that everything is ready for printing;
+    \item the line manager is set up (which handles printing each line in the listing);
+    \item the additional vertical buffering added by \macro\syntaxoutbox{} is computed into \macro\syntaxoutboxbuf{} by \macro\syntaxoutboxsetbuf;
+    \item the listing is processed through a ppbox dictated by \macro\syntaxoutbox.
+\eenum
+
+This is a deceptive description of how this process works.
+But what's important is \macro\_commandexecute, which has all the commands for setting up syntax highlighting and the verbatim environment.
+This is not a token list to messed with by the user directly, it should be done indirectly through \macro\_listingcommands, which in turn should be altered indirectly through ptb-syntax files.
+
+But if no syntax is set, the definition of \macro\_commandexecute{} is essentially:
+
+\blisting
+\_commandexecute={
+    \_execute{\_r_replace{ }{\w \w}}
+    \_execute{\_r_replace{^^M}{\w\n\n\w}}
+}
+\elisting
+
+\macro\_execute{} is defined simply to \inlinecode|\def\_execute#1{#1\_code}| right before execution, where \macro\_code{} is the captured listing.
+And \macro\_r_replace{} is defined to simply be \inlinecode|\def\_r_replace#1#2#3{\replace{#3}{#1}{#2}}|.
+So when \macro\_commandexecute{} is called, the result is simply two lines: \inlinecode|\replace{\_code}{ }{\w \w}| and \inlinecode|\replace{\_code}{^^M}{\w\n\n\w}|.
+
+\macroexp{\replace <macro>{<pattern>}{<replacement>}}
+Replaces (the expansion of) {\it pattern} with (the expansion of) {\it replacement} in the definition of {\it macro}.
+\emacroexp
+
+So the result is that now \macro\_code{} contains the listing, but where each space is now swapped with \inlinecode|\w \w| and each line ending with \inlinecode|\w\n\n\w|.
+\macro\_code{} is actually defined to be the listing wrapped in \inlinecode|\n\w...\w\n|, so the result is that every line in the listing is wrapped in \inlinecode|\n...\n| and every word is wrapped in \inlinecode|\w...\w|.
+
+Now suppose you wanted to replace all occurrences of {\tt hi} with {\tt hello}.
+You'd need to add the line \inlinecode|\_execute{\_r_replace{\w hi\w}{\w hello\w}}| to \macro\_commandexecute{} (note that the pattern and replacement are wrapped in \macro\w s).
+You can do so with the following command:
+
+\macroexp{\_add_command_replace {<pattern>}{<replacement>}}
+Adds \getmacrousage{\_execute{\_r_replace{<pattern>}{<replacement>}}} to \macro\_commandexecute.
+\emacroexp
+
+But this is unwieldy, so the actual mechanism used is as follows:
+\benum
+    \item \macro\_commandcapture{} sets the definitions of \macro\replace{} and \gotomacro\replacefromto{} (see below) to\hfill\break\macro\_add_command_replace{} and \macro\_add_command_replacefromto{}.
+    \item \macro\_listingcommands{} contains uses of \macro\replace{} and \macro\replacefromto{}, which are executed.
+        This adds the required lines to \macro\_commandexecute.
+    \item \macro\_commandexecute{} is executed.
+\eenum
+
+Now to explain \gotomacro\loadsyntax{} and \gotomacro\setsyntax: \getmacrousageB{\loadsyntax {<language>}} reads from the ptb-syntaxptb-syntax  file {\tt ptb-syntax-{\it language}.tex}, which should define a token list
+\macro\_{\it language}{\tt _listingcommands}.
+Then \macro\setsyntax{} simply sets \macro\_listingcommands{} to \macro\_{\it language}{\tt _listingcommands}.
+
+\subsection{Usage}
+
+Now notice an issue: \macro\replace{} (and \macro\replacefromto) both expand their arguments.
+What if the arguments expand to invalid code?
+This is the purpose of \macro\_macrocallmanager{} and two basic macros: \macro\call{} and \macro\mlcall.
+They are set to \macro\relax{} so they aren't expanded in \macro\replace{} and friends, and \macro\_macrocallmanager{} sets them to their proper definitions:
+
+\macroexp{\call <macro>{<parameters>}{<last>}}
+Simply calls \getmacrousageB{\macro <parameters>{<last>}}.
+\emacroexp
+
+\macroexp{\mlcall <macro>{<parameters>}{<last>}}
+If {\it last} is equal to \inlinecode|x1\n\n x2\n\n...\n\n XN|, expands to \inlinecode|\call <macro>{<parameters>}{x1}\n\n...\n\n\call <macro>{<parameters>}{xN}|.
+\emacroexp
+
+Since \macro\call{} and friends are redefined only after \macro\_commandexecute{} is executed, to call a macro without it expanding you can use them.
+For example, to replace {\tt int} with {\tt int} colored red, you can use \inlinecode|\replace{\w int\w}{\w\call localcolor{{red}}{int}\w}|.
+
+Two shortcuts are provided: \macro\c{} and \macro\mc{}.
+\getmacrousageB{\c{<color>}{<text>}} will set the color of {\it text} (in a \macro\call), and \getmacrousageB{\mc{<color>}{<text>}} will also set the color but in a \macro\mlcall.
+
+Now what is \macro\replacefromto?
+
+\macroexp{\replacefromto <macro>{<start>}{<end>}{<replacement>}}
+Replacement is a macro definition with a single pattern (e.g. \inlinecode|{#1}|).
+\macro\replacefrom{} matches \getmacrousage{<start>#1<end>} in the expansion of {\it macro} and replaces it with {\it replacement}, this redefines {\it macro}.
+
+So for example if \macro\X{} expands to \inlinecode|(.)(.)|, \inlinecode|\replacefrom\X(){[#1]}| will redefine \macro\X{} to be \inlinecode|[.][.]|.
+\emacroexp
+
+\subsubsection{An Example}
+
+\pdftoolbox{} provides syntax highlight for the C language in {\tt ptb-syntax-C.tex}, whose content is:
+
+\listfile{ptb-syntax-C}
+
+Let us now explain each part of the file:
+
+\listfile{ptb-syntax-C}[1-9]
+
+This defines two new token lists, \macro\lstCcolor{} (for use within the file), and \macro\_C_listingcommands,
+which as explained previously is what sets the listing commands for the {\tt C} syntax.
+\macro\lstCcolor{} has C-specific colors, changing it allows you to change the colors of C-specific
+highlighting.
+Note that all changes in this file must be global.
+
+\listfile{ptb-syntax-C}[11-12]
+
+Begins the definition of \macro\_C_listing_commands{} by first defining C-specific colors.
+
+\listfile{ptb-syntax-C}[13-17]
+
+\benum
+    \item Swaps \macro\"{} with \inlinecode|{\"}|, so that the quotation in \macro\"{} (backslash-quote) is
+        not replaced by the following lines.
+    \item Colors between \inlinecode|"| and \inlinecode|"| with a multiline coloring of color {\tt quote}.
+    \item Colors between \inlinecode|//| and \macro\n{} (the end of the line) with the color of a comment.
+        Notice that it adds back in the \macro\n; otherwise this will mess up the line-reading.
+    \item Replaces between \inlinecode|/*| and \inlinecode|*/| with a multline coloring of color
+            {\tt lst-comment}.
+    \item Replaces from \inlinecode|#| to the end of line with a coloring of color {\tt preprocessor}.
+        (Again adding back in \macro\n.)
+\eenum
+
+\listfile{ptb-syntax-C}[18-22]
+
+Sets replacement for \TeX-reserved characters (open and close curly braces, percent).
+
+\listfile{ptb-syntax-C}[23-25]
+
+Replaces non-character letters with a coloring and word break (since, e.g. {\tt x.y} is not a single word).
+Note the use of \gotomacro\map.
+
+\listfile{ptb-syntax-C}[26-32]
+
+Replaces keywords with color {\tt keyword}.
+
+\listfile{ptb-syntax-C}[33-34]
+
+Colors numbers with {\tt lst-number}.
+
+\subsubsection{Changing the Output}
+
+\pdftoolbox{} outputs the listing in colorboxes according to \macro\syntaxoutbox.
+The default is just as follows:
+
+\listfile{ptb-listings}[121-127]
+
+This just places the content in a colored box of color {\tt lst-bg} with a text color of {\tt lst-fg}, along with placing a header and footer.
+We must also set \macro\syntaxoutboxbuf, which is the total amount of vertical buffering added by
+\macro\syntaxoutbox{} to its contents.
+This is done by \macro\syntaxoutboxsetbuf{} which must define a macro \macro\syntaxoutboxbuf{} to be the total amount of extra vertical space \macro\syntaxoutbox{} adds.
+
+But we can also do, for example:
+
+\blisting
+\letcolor{lst-stroke}{lst-fg}
+\def\syntaxoutbox#1{%
+    \hbox{\curvedcolorbox{lst-stroke}{lst-bg}{\_setcolor{}{lst-fg}#1}{-.-.-.-.}}%
+}
+\def\syntaxoutboxsetbuf{%
+    \edef\syntaxoutboxbuf{\the\dimexpr\_actual_curve_buf * 2\relax}%
+}
+\elisting
+
+\bgroup
+\letcolor{lst-stroke}{lst-fg}
+\def\syntaxoutbox#1{%
+    \hbox{\curvedcolorbox{lst-stroke}{lst-bg}{\_setcolor{}{lst-fg}#1}{-.-.-.-.}}%
+}
+\def\syntaxoutboxsetbuf{%
+    \edef\syntaxoutboxbuf{\the\dimexpr\_actual_curve_buf * 2\relax}%
+}
+
+Now listings will have a curve colored box:
+
+\blisting
+\def\X#1#2{%
+    \ifnum#1>0 %
+        {\X{\numexpr#1-1\relax}{#2}}^{\X{\numexpr#1-1\relax}{#2}}_{\X{\numexpr#1-1\relax}{#2}}%
+    \else%
+        \vcenter{\hbox{$\m@th\scriptscriptstyle#2$}}%
+    \fi%
+}
+
+$$\X{4}\blacksquare$$
+\elisting
+\egroup
+
+(The code outputs the following by the way:)
+
+\bgroup\catcode`_=8
+\def\X#1#2{%
+    \ifnum#1>0 %
+        {\X{\numexpr#1-1\relax}{#2}}^{\X{\numexpr#1-1\relax}{#2}}_{\X{\numexpr#1-1\relax}{#2}}%
+    \else%
+        \vcenter{\hbox{$\m@th\scriptscriptstyle#2$}}%
+    \fi%
+}
+
+$$\X{4}\blacksquare$$
+\egroup
 

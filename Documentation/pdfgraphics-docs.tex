@@ -56,18 +56,25 @@ Adds a frame around {\it material} with a buffer of \macro\bufferwidth{} and \ma
 \macroexp{\curvedcolorbox {<stroke color>}{<bg color>}{<material>}{<curve control>}}
 Creates a curved color framed box around {\it material} with frame color {\it stroke color} and background color {\it bg color} (which may be names or of the form \inlinecode|<color space>{<code>}|.
 The curve's stroke width is determined by \macro\curvewidth, and the buffer around the material is determined by \macro\curvebuffer.
-{\it control} is a sequence of $4$ symbols (either {\tt .} or {\tt X}) which determine whether a corner is curved or not.
-A {\tt .} corresponds to a curve and a {\tt X} corresponds to a right corner.
+
+{\it control} is a sequence of $8$ symbols of the form \getmacrousageB{<bline><bldot><lline><tldot><tline><trdot><rline><brdot>} where each $\langle{\tt X\it dot}\rangle$ corresponds to whether or not a corner is curved or not
+({\tt bl} for bottom left, {\tt tl} for top left, etc.), and each $\langle{\tt X\it line}\rangle$ corresponds to whether or not a border is drawn or not ({\tt b} for bottom, {\tt l} for left, etc.).
+For a corner, {\tt.} corresponds to a curve and {\tt X} for a right corner.
+For a border, {\tt-} corresponds to drawing the line and \inlinecode|_| to not.
+
 A shadow of color \macro\boxshadowcolor{} is added to to the box, at an x and y offset of \macro\shadowxoff{} and \macro\shadowyoff{} respectively.
 
 So for example:
 
 \displaycode{%
-\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{....}&\cr
-\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{X...}&\cr
-\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{.X..}&\cr
-\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{..X.}&\cr
-\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{...X}&}
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{-.-.-.-.}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{-X-.-.-.}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{-.-X-.-.}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{-.-.-X-.}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{-.-.-.-X}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{_X-X_X-X}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{_._._._.}&\cr
+\curvedcolorbox{blue}{red}{\color{white}pdfToolbox}{-X_X-X_X}&}
 \emacroexp
 
 \macroexp{\fakebold {<material>}}
@@ -215,6 +222,8 @@ The height of each row is at least \macro\diagrowheight{} and the width of each 
 \subsection{Listings}
 
 In {\tt pdfGraphics/ptb-listings.tex}, \pdftoolbox{} provides macros for writing code listings.
+The mechanism for how \pdftoolbox's listing works is greatly inspired by Petr Ol\v s\'ak's \url{https://ctan.org/pkg/optex?lang=en}{Op\TeX}.
+The mechanism is largely the same, though the implementation may differ.
 
 \macroexp{\setupverb}
 This will set up a verbatim environment, essentially changing all special category codes to $12$.
@@ -223,12 +232,20 @@ This will set up a verbatim environment, essentially changing all special catego
 \macroexp{\blisting <first line> ... \elisting}
 Writes {\tt...} in a verbatim environment, with syntax highlighting if set (see \gotomacro\loadsyntax{} and \gotomacro\setsyntax).
 {\it first line} (the rest of the line after \macro\blisting) will be executed as normal (so you can set syntax here; see \gotomacro\setsyntax).
+The line number of each line in the listing is stored in \macro\lstlinenum\anchormacro\lstlinennum, which is not reset after each listing.
+\emacroexp
+
+\macroexp{\listfile {<file>}[<start>-<end>]}
+Creates a listing from file {\it file}.
+Reads between lines {\it start} and {\it end} (inclusive).
+If {\it start} isn't provided, starts from $1$.
+If {\it end} isn't provided reads until the end (actually a large number).
 \emacroexp
 
 \macroexp{\loadsyntax {<language>}}
 Loads in the necessary information for {\it language} syntax highlighting.
 The information is input from the ptb-syntax file {\tt ptb-syntax-{\it language}}.
-See the internals of this section for more information on how to write such a file.
+See the \gotoanchor{internal-listings}{internals of this section} for more information on how to write such a file.
 
 Currently \pdftoolbox{} provides support for syntax highlighting of \TeX{} ({\it language} is {\tt TeX}) and of C ({\it language} is {\tt C}).
 \emacroexp
@@ -255,4 +272,7 @@ Some useful colors to be aware of:
     \item {\tt lst-comment}: the colors of comments (must be activated in the ptb-syntax file);
     \item {\tt lst-number}: the colors of numbers (must be activated in the ptb-syntax file).
 \elist
+
+\pdftoolbox{} also provides a token list \macro\everylisting{} which is inserted before every listing.
+So for example doing \inlinecode|\everylisting={\lstlinenum=0}| will reset the line numbering before each listing.
 

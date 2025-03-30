@@ -14,6 +14,7 @@
 \let\_xp=\expandafter
 \def\_nul{\_nul}
 \def\_id#1{#1}
+\def\_empty{}
 \long\def\_gobble#1{}
 \long\def\_gobbletilnul#1\_nul{}
 \def\_mstrip{\_xp\_gobble\string}
@@ -204,4 +205,9 @@
     \map{\_reverse}{#2}%
     \let#1=\_uregA%
 }
+
+\def\setmacrotolen#1#2{{%
+    \setbox0=\hbox{#2}%
+    \xdef#1{\the\wd0}%
+}}
 

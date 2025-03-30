@@ -1,25 +1,9 @@
+\pdfcompresslevel=0
+
 \input pdfToolbox
 
-\loadsyntax{TeX}
-\setsyntax{TeX}
-
-\blisting
-\def\getinput#1{
-    \mapkeys{
-        first={
-            name=fst,
-            required,
-            definition=\edef,
-            mapping=\puthi
-        },
-        second={
-            name=snd,
-            default=A. Feiglin
-        }
-    }{#1}
-}
-\elisting
-
-\say{\the\catcode`\ }
+\bppbox{red}{blue}{black}
+Hello
+\eppbox
 
 \bye

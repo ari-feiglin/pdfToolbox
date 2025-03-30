@@ -206,6 +206,7 @@ For a depth of $N$, the symbol used is stored in the macro \macro\liststyleN\anc
 Similarly enumerated lists start with \macro\benum\anchormacro\benum{} and end with \macro\elist\anchormacro\eenum.
 Each item begins with \macro\item, and the style for the enumeration is determined by the depth of the list.
 For a depth of $N$, the $n$th element is styled with \inlinecode|\enumstyleN{n}|.
+It is put in a box of width \inlinecode|\enumstyleN@wd|.
 
 To add text in between items (not as part of the list), you can use \macro\mtext\anchormacro\mtext.
 
