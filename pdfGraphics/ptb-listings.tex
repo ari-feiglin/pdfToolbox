@@ -48,7 +48,7 @@
     \the\_commandcapture%
     \the\_listingcommands%
     \def\_code{\n\w#1\n}%
-    \lstcodelinewd=\dimexpr\hsize - \_lstlinenumwd - \lstlinenumbuf\relax%
+    \setuplstcodelinewd%
     \def\_execute##1{##1\_code}%
     \the\_commandexecute%
     \the\_macrocallmanager%
@@ -67,7 +67,7 @@
 {\catcode`\^^M=12
 \gdef\_listfile#1[#2-#3]{%
     \bgroup%
-    \lstheader={\hbox to\hsize{\hfil\lstfileheaderfontset#1}}%
+    \lstheader={\hfil\lstfileheaderfontset#1}%
     \lstfooter={}%
     \the\everylisting%
     \setupverb%
@@ -88,16 +88,17 @@
     \loop%
         \advance\lstlinenum by 1\relax%
         \immediate\read\_PTBread to\_codeline%
-        \ifnum\lstlinenum>\numexpr\_begin-1\relax%
+        \ifeof\_PTBread%
+            \let\_stop=\_nul%
+        \else\ifnum\lstlinenum>\numexpr\_begin-1\relax%
         \ifnum\lstlinenum<\numexpr\_finish+1\relax%
             \edef\_code{\_code\_codeline}%
-        \else\let\_stop=\_nul\fi\fi%
-        \ifeof\_PTBread\let\_stop=\_nul\fi%
+        \else\let\_stop=\_nul\fi\fi\fi%
         \unless\ifx\_stop\_nul%
     \repeat%
     \immediate\closein\_PTBread%
     \edef\_code{\_code\n}%
-    \lstcodelinewd=\dimexpr\hsize - \_lstlinenumwd - \lstlinenumbuf\relax%
+    \setuplstcodelinewd%
     \def\_execute##1{##1\_code}%
     \the\_commandexecute%
     \the\_macrocallmanager%
@@ -114,22 +115,29 @@
     \egroup%
 }}
 
+\def\setuplstcodelinewd{%
+    \lstcodelinewd=\dimexpr\hsize - \_lstlinenumwd - \lstlinenumbuf\relax%
+}
+
 \def\listfile#1{\_ifnextchar[ {\_listfile{#1}}{\_listfile{#1}[-]}}
 
 \def\lstfileheaderfontset{\setfontandscale{tt}{8pt}}
 
 \def\syntaxoutbox#1{%
     \vbox{\offinterlineskip%
-        \hbox{\the\lstheader}%
+        \hbox{\makelstheader}%
         \hbox{\coloredbox{lst-bg}{\color{lst-fg}#1}}%
-        \hbox{\the\lstfooter}%
+        \hbox{\makelstfooter}%
     }
 }
 \def\syntaxoutboxsetbuf{{%
-    \setbox0=\hbox{\the\lstheader}%
-    \setbox1=\hbox{\the\lstfooter}%
+    \setbox0=\hbox{\makelstheader}%
+    \setbox1=\hbox{\makelstfooter}%
     \xdef\syntaxoutboxbuf{\the\dimexpr\bufferwidth * 2 + \ht0 + \dp0 + \ht1 + \dp1\relax}
 }}
+
+\def\makelstheader{\hbox to\hsize{\the\lstheader}}
+\def\makelstfooter{\hbox to\hsize{\the\lstfooter}}
 
 \def\_ptb_empty_macro{\_ptb_empty_macro}
 

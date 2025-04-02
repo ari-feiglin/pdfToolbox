@@ -83,7 +83,7 @@ For example, it could be as simple as:
 \def\endpp{%
     \egroup%
     \_splitcontentbox{\bufferwidth * 2}%
-        \_colorcontentbox\_colorcontentbo\_colorcontentbo\_colorcontentboxxx%
+        \_colorcontentbox\_colorcontentbox\_colorcontentbox\_colorcontentbox%
     \kern.5cm\relax%
 }
 \elisting
@@ -243,7 +243,7 @@ Now to explain \gotomacro\loadsyntax{} and \gotomacro\setsyntax: \getmacrousageB
 \macro\_{\it language}{\tt _listingcommands}.
 Then \macro\setsyntax{} simply sets \macro\_listingcommands{} to \macro\_{\it language}{\tt _listingcommands}.
 
-\subsection{Usage}
+\subsubsection{Usage}
 
 Now notice an issue: \macro\replace{} (and \macro\replacefromto) both expand their arguments.
 What if the arguments expand to invalid code?
@@ -385,4 +385,25 @@ $$\X{4}\blacksquare$$
 
 $$\X{4}\blacksquare$$
 \egroup
+
+You can also alter how each line is output.
+This is done by \anchormacro\_syntax_linemanager, which takes a single input and outputs the line to print in the listing.
+The default definition is
+\listfile{ptb-listings}[212-229]
+But a simpler definition would be just
+\blisting
+\def\_syntax_linemanager#1{{
+    \def\_regA{#1}%
+    \def\_regB{\w}%
+    \unless\ifx\_regA\_regB%
+        \hbox{#1}%
+    \fi%
+}}
+\elisting
+Which will simply output the line as-is; without line numbering or splitting over multiple lines.
+The reason for the conditional is because \pdftoolbox{} will pass an empty line containing only \macro\w{} to \macro\_syntax_linemanager{} at the last line (this is the only line to do so).
+
+\bnote
+The passing of \macro\w{} as the final line was unintended behavior, but it could be useful and was therefore kept.
+\eppbox
 

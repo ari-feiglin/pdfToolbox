@@ -210,7 +210,7 @@ It is put in a box of width \inlinecode|\enumstyleN@wd|.
 
 To add text in between items (not as part of the list), you can use \macro\mtext\anchormacro\mtext.
 
-\subsection{Table of Contents}
+\subsection{Table of Contents} \anchor{table-of-contents}
 
 In {\tt pdfDstruct/tableofcontents.tex}, \pdftoolbox{} provides macros for creating and displaying tables of content.
 
@@ -241,6 +241,10 @@ Sets the format of the table of contents at the depth {\it depth}.
 
 \pdftoolbox{} provides four types of sectioning: parts, sections, subsections, and subsubsections.
 Each has a counter in its name (e.g. {\tt section}), and a macro with the current section name (e.g. \macro\currsection).
+
+\macroexp{\part {<title>}}
+Adds a part to the document.
+\emacroexp
 
 \macroexp{\section (*){<title>}}
 Adds a section to the document.

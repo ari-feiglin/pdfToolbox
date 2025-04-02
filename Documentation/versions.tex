@@ -1,0 +1,37 @@
+\subsection{pdfToolbox v0.1} \anchor{v0.1}
+
+First version of \pdftoolbox.
+
+\subsubsection{Known Bugs}
+
+\blist
+    \item \macro\url{} inserts invalid characters into the PDF.
+        Some readers can still read the PDF, others won't.
+        Fixed in \gotoanchor{v0.2}{version 0.2}.
+\elist
+
+\subsection{pdfToolbox v0.2} \anchor{v0.2}
+
+Bug fixes and added features.
+
+\subsubsection{What's New?}
+
+\blist
+    \item Fixed bug caused \macro\url{} to create malformed PDF files.
+    \item Added listings.
+    \item Changed the method of creating section headers, and their corresponding toc line (see \gotoanchor{table-of-contents}), more work is now done by \gotomacro\settocdepthformat{} and \gotomacro\addtoccontent.
+        (This is also a breaking change.)
+\elist
+
+\subsubsection{What's Broken}
+
+\pdftoolbox{} v0.2 adds breaking changes to the toolbox.
+These changes will render files created with previous versions un-compilable.
+\blist
+    \item \macro\linkborder{} no longer wraps its ouput in \inlinecode|attr {...}|, which is necessary for anchors;
+        now \macro\_gotoanchor{} adds this wrapping.
+    \item \macro\_splitcontentbox{} now requires more arguments which allows for more customization (for more information, see \gotomacro\_splitcontentbox).
+    \item Changed the method of creating section headers, and their corresponding toc line (see the section on \gotoanchor{table-of-contents}{tables of content}),
+        more work is now done by \gotomacro\settocdepthformat{} and \gotomacro\addtoccontent.
+\elist
+

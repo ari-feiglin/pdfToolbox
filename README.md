@@ -1,4 +1,4 @@
-# pdfToolbox v0.1
+# pdfToolbox v0.2
 ## Ari Feiglin -- ari.feiglin@gmail.com
 
 pdfToolbox is a toolbox of various "subpackages" intended for programming and creating beautiful plain-pdfTeX documents.
@@ -9,6 +9,8 @@ It is an amalgamation of the following "subpackages" (in the future there will b
 
 pdfToolbox currently on works with pdfTeX.
 It is not compatible with any form of LaTeX, and currently does not work with XeTeX or LuaTeX (though hopefully LuaTeX support will be added in the future).
+
+Documentation can be found in the pdfToolbox/Documentation/pdfToolbox-docs.pdf PDF file.
 
 pdfToolbox is free to use under the MIT license.
 
